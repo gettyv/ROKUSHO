@@ -13,6 +13,8 @@ Motor(m_pin[1][0], m_pin[1][1]),
 Motor(m_pin[2][0], m_pin[2][1]), 
 Motor(m_pin[3][0], m_pin[3][1])};
 
+bool picked_up = false;
+
 // Simple clamping function
 template <typename T>
 T clamp(T value, T minVal, T maxVal) {
@@ -59,7 +61,17 @@ void loop() {
   }
   
   if (allSensorsLowReflectance) {
-    // This is when we are at a junction
+    if (picked_up) {
+      // This is when we are at a junction, and we have already picked up the patties
+      // Put code here for storing the patties
+      return;
+    }
+    else {
+      // This is when we are at a junction, and we have not picked up the patties
+      // Put code here for picking up the patties
+      picked_up = true;
+      return;
+    }
     return;
   }
 
