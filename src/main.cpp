@@ -28,6 +28,7 @@ T clamp(T value, T minVal, T maxVal) {
 }
 
 void setup() {
+  Serial.begin(9600);
   lf.setTypeAnalog();
   lf.setSensorPins(line_follower_pins, num_line_sensors);
 
@@ -37,6 +38,7 @@ void setup() {
   {
     lf.calibrate();
     delay(20);
+    Serial.println(i);
   }
   digitalWrite(calibration_LED_pin, LOW);
 }
@@ -82,13 +84,13 @@ void loop() {
   int right_speed = clamp(base_speed - controller_output, -max_speed, max_speed);
 
   motors[0].set_speed(left_speed);
-  motors[1].set_speed(left_speed);
-  motors[2].set_speed(right_speed);
-  motors[3].set_speed(right_speed);
+  // motors[1].set_speed(left_speed);
+  motors[2].set_speed(-right_speed);
+  // motors[3].set_speed(right_speed);
 
-  Serial.print(left_speed);
-  Serial.print(" ");
-  Serial.println(right_speed);
+  Serial.print(position);
+  Serial.print(",");
+  Serial.println(controller_output);
 }
 
 
