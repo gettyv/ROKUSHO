@@ -93,30 +93,57 @@ void line_follow_until_junction(Controller controller) {
     
     // If all sensors see very low reflectance, take some appropriate action
     // for this situation.
-    bool allSensorsLowReflectance = true;
+    bool allLeftLowReflectance = true;
+    bool allRightLowReflectance = true;
+
     for (int i = 0; i < num_line_sensors; i++) {
-      if (sensors[i] > 750) {
-        allSensorsLowReflectance = false;
-        break;
+      if (sensors[i] < 200) {
+        
+        if (i < num_line_sensors / 2) {
+          allRightLowReflectance = false;
+        } else {
+          allLeftLowReflectance = false;
+        }
       }
     }
     
-    if (allSensorsLowReflectance) return;
+    // if (allSensorsLowReflectance) return;
 
     int error = position - line_center_position;
     float controller_output = controller.update(error);
 
-    int left_speed = clamp(base_speed + controller_output, -max_speed, max_speed);
-    int right_speed = clamp(base_speed - controller_output, -max_speed, max_speed);
+    float fwd_speed = base_speed;
+    if (allLeftLowReflectance && !allRightLowReflectance) {
+      // fwd_speed = 0;
+      // controller_output = controller_output * 0.8;
+    }
+
+    float left_speed = clamp(fwd_speed + controller_output, -max_speed, max_speed);
+    float right_speed = clamp(fwd_speed - controller_output, -max_speed, max_speed);
 
     motors[0].set_speed(-left_speed);
     motors[1].set_speed(-left_speed);
     motors[2].set_speed(-right_speed);
     motors[3].set_speed(right_speed);
 
-    Serial.print(position);
-    Serial.print(",");
+    Serial.print("Left Speed: "); 
+    Serial.print(left_speed); 
+    Serial.print(" Right Speed: "); 
+    Serial.print(right_speed); 
+    Serial.print(" Controller Output: "); 
     Serial.println(controller_output);
+
+    // Print the content of the sensors array to serial
+    for (int i = 0; i < num_line_sensors; i++) {
+      Serial.print("Sensor ");
+      Serial.print(i);
+      Serial.print(": ");
+      Serial.println(sensors[i]);
+    }
+    Serial.print("All Left Low Reflectance: ");
+    Serial.println(allLeftLowReflectance);
+    Serial.print("All Right Low Reflectance: ");
+    Serial.println(allRightLowReflectance);
   }
 }
 
