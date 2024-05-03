@@ -14,6 +14,7 @@ Motor(m_pin[2][0], m_pin[2][1]),
 Motor(m_pin[3][0], m_pin[3][1])};
 
 bool picked_up = false;
+int turning_cycles = 0;
 
 // Simple clamping function
 template <typename T>
@@ -91,23 +92,35 @@ void line_follow_until_junction(Controller controller) {
     uint16_t sensors[num_line_sensors];
     int16_t position = lf.readLineBlack(sensors);
     
-    // If all sensors see very low reflectance, take some appropriate action
-    // for this situation.
-    bool allSensorsLowReflectance = true;
+    bool allLeftLowReflectance = true;
+    bool allRightLowReflectance = true;
+
     for (int i = 0; i < num_line_sensors; i++) {
-      if (sensors[i] > 750) {
-        allSensorsLowReflectance = false;
-        break;
+      if (sensors[i] < 100) {
+        
+        if (i < num_line_sensors / 2) {
+          allRightLowReflectance = false;
+        } else {
+          allLeftLowReflectance = false;
+        }
       }
     }
-    
-    if (allSensorsLowReflectance) return;
 
     int error = position - line_center_position;
     float controller_output = controller.update(error);
 
-    int left_speed = clamp(base_speed + controller_output, -max_speed, max_speed);
-    int right_speed = clamp(base_speed - controller_output, -max_speed, max_speed);
+    float fwd_speed = base_speed;
+    if (allLeftLowReflectance && !allRightLowReflectance) {
+      turning_cycles = 50;
+      
+    }
+    if (turning_cycles > 0) {
+      fwd_speed = 4;
+      turning_cycles--;
+    }
+
+    int left_speed = clamp(fwd_speed + controller_output, -max_speed, max_speed);
+    int right_speed = clamp(fwd_speed - controller_output, -max_speed, max_speed);
 
     motors[0].set_speed(-left_speed);
     motors[1].set_speed(-left_speed);
