@@ -2,22 +2,26 @@
 #define RPI_H
 
 #include <Arduino.h>
-#include <string>
 
 class RPI {
 public:
-    RaspberryPi(const std::string& serialPort);
-    ~RaspberryPi();
+    // Constructor
+    RPI(long baudRate);
 
-    bool connect();
-    void disconnect();
+    // Initialize serial communication
+    void begin();
 
-    bool sendData(const std::string& data);
-    std::string receiveData();
+    // Send a message to the Raspberry Pi
+    void sendMessage(const String &message);
+
+    // Check if a message is available from the Raspberry Pi
+    bool messageAvailable();
+
+    // Read the incoming message from the Raspberry Pi
+    String readMessage();
 
 private:
-    std::string serialPort_;
-    int serialPortHandle_;
+    long baudRate;
 };
 
 #endif // RPI_H
