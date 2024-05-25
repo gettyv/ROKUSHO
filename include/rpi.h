@@ -11,6 +11,8 @@ public:
     // Initialize serial communication
     void begin();
 
+    void wait_rpi_ready(unsigned long timeoutDuration);
+
     // Send a message to the Raspberry Pi
     void sendMessage(const String &message);
 

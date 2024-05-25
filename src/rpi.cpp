@@ -13,6 +13,19 @@ void RPI::begin() {
     }
 }
 
+void RPI::wait_rpi_ready(unsigned long timeoutDuration /*= 0*/) {
+    unsigned long startTime = millis();
+    while (true) {
+        if (RPI::readMessage() == "RPI_READY") {
+            break;
+        }
+        if (timeoutDuration != 0 && millis() - startTime >= timeoutDuration) {
+            // Timeout occurred, handle the timeout here
+            break;
+        }
+    }
+}
+
 // Send a message to the Raspberry Pi
 void RPI::sendMessage(const String &message) {
     Serial.println(message);
