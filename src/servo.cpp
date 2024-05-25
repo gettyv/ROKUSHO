@@ -6,6 +6,12 @@ Servo::Servo(int pwm_pin, int angle_pin)
 {
     _pwm_pin = pwm_pin;
     _angle_pin = angle_pin;
+
+}
+
+void Servo::begin()
+{
+    // Setup Potentiometers
     pinMode(_pwm_pin, OUTPUT);
     pinMode(_angle_pin, INPUT);
 }

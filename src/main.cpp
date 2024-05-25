@@ -6,6 +6,8 @@
 #include <QTRSensors.h>
 #include <controller.h>
 
+#include <Servo.h>
+
 QTRSensors lf;
 Controller base_controller(Kp, Kd);
 Motor motors[] = {Motor(m_pin[0][0], m_pin[0][1]), 
@@ -121,28 +123,14 @@ void line_follow_until_junction(Controller controller) {
 }
 
 
-
 void setup() {
   Serial.begin(9600);
-  lf.setTypeAnalog();
-  lf.setSensorPins(line_follower_pins, num_line_sensors);
-
-
-  digitalWrite(calibration_LED_pin, HIGH);
-  for (uint8_t i = 0; i < calibration_iterations; i++)
-  {
-    lf.calibrate();
-    delay(20);
-    Serial.println(i);
-  }
-  digitalWrite(calibration_LED_pin, LOW);
 }
 
 
 
 
 void loop() {
-  line_follow_until_junction(base_controller);
 }
 
 
