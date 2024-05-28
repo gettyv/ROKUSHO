@@ -13,15 +13,15 @@ void RPI::begin() {
     }
 }
 
-void RPI::wait_rpi_ready(unsigned long timeoutDuration /*= 0*/) {
+int RPI::wait_rpi_ready(unsigned long timeoutDuration /*= 0*/) {
     unsigned long startTime = millis();
     while (true) {
         if (RPI::readMessage() == "RPI_READY") {
-            break;
+            return 0;
         }
         if (timeoutDuration != 0 && millis() - startTime >= timeoutDuration) {
             // Timeout occurred, handle the timeout here
-            break;
+            return 1;
         }
     }
 }

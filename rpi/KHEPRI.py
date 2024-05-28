@@ -18,7 +18,16 @@ while True:
         if "ARDUINO_READY" in line:
             break
 
-print("Arduino has started the loop")
+print("Arduino is ready, waiting for data format")
+while True:
+    if ser.in_waiting > 0:
+        line = ser.readline().decode('utf-8').rstrip()
+        print(f"Received: {line}")
+        
+        df.header = line.split(',')
+        for entry in line.split(','):
+            
+
 
 # Now you can continue to communicate with the Arduino
 try:
