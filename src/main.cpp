@@ -181,9 +181,9 @@ void loop() {
   state.left_speed = clamp(fwd_speed + state.controller_output, -max_speed, max_speed);
   state.right_speed = clamp(fwd_speed - state.controller_output, -max_speed, max_speed);
 
-  motors[0].set_speed(-state.left_speed);
-  motors[1].set_speed(-state.left_speed);
-  motors[2].set_speed(-state.right_speed);
+  motors[0].set_speed(state.left_speed);
+  motors[1].set_speed(state.left_speed);
+  motors[2].set_speed(state.right_speed);
   motors[3].set_speed(state.right_speed);
 
   Serial.print(state.log());
