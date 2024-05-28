@@ -1,4 +1,5 @@
-#include "RPI.h"
+#include <Arduino.h>
+#include <rpi.h>
 
 // Constructor to initialize baud rate
 RPI::RPI(long baudRate) {

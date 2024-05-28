@@ -96,7 +96,7 @@ void turn_right() {
 
 void setup() {
   rpi.begin();
-  if (rpi.wait_rpi_ready(0) == 1) {
+  if (rpi.wait_rpi_ready(1e6) == 1) {
     // Timeout, hold forever
     while (true) {delay(10000000);}
   }
