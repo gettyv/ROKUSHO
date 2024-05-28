@@ -1,5 +1,9 @@
 import serial
 import time
+import pandas as pd
+import numpy as np
+
+df = pd.DataFrame()
 
 # Set up the serial connection (adjust the port as necessary)
 ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
@@ -24,23 +28,20 @@ while True:
         line = ser.readline().decode('utf-8').rstrip()
         print(f"Received: {line}")
         
-        df.header = line.split(',')
-        for entry in line.split(','):
+        df.columns = line.split(',')
+        break
+        
             
 
 
 # Now you can continue to communicate with the Arduino
 try:
     while True:
-        # Example: Send a message to the Arduino every 2 seconds
-        ser.write(b'Hello, Arduino!\n')
-        print("Sent: Hello, Arduino!")
-        
-        # Read and print any incoming messages from the Arduino
         time.sleep(2)
         while ser.in_waiting > 0:
             line = ser.readline().decode('utf-8').rstrip()
             print(f"Received: {line}")
+            df = df.append(pd.Series(line.split(','), index=df.columns), ignore_index=True)
 
 except KeyboardInterrupt:
     print("Program interrupted by user")
@@ -48,3 +49,5 @@ except KeyboardInterrupt:
 finally:
     ser.close()
     print("Serial connection closed")
+    df.to_csv('data.csv', index=False)
+    print("Data saved to data.csv")
