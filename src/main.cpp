@@ -178,8 +178,8 @@ void loop() {
   //   avoid_cycles--;
   // }
 
-  state.left_speed = clamp(fwd_speed + state.controller_output, -max_speed, max_speed);
-  state.right_speed = clamp(fwd_speed - state.controller_output, -max_speed, max_speed);
+  state.left_speed = clamp(fwd_speed + state.controller_output, -clamp_max_speed, clamp_max_speed);
+  state.right_speed = clamp(fwd_speed - state.controller_output, -clamp_max_speed, clamp_max_speed);
 
   motors[0].set_speed(state.left_speed);
   motors[1].set_speed(state.left_speed);

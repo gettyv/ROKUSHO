@@ -12,7 +12,7 @@ Motor::Motor(int fwd_pin, int rev_pin)
 
 float Motor::set_speed(float speed)
 {
-    float pwm_command = map(abs(speed), 0, max_speed, 0, 255);
+    float pwm_command = map(abs(speed), 0, hw_max_speed, 0, 255);
     if (speed > 0){
         analogWrite(_fwd_pin, pwm_command);
         analogWrite(_rev_pin, 0);
