@@ -43,11 +43,13 @@ int SWEEP_DELAY = 10;
 
 int bar_traj[]= {180, 130};
 int bar_servoPos = 0;
-
+int bar_min = 180;
+int bar_max = 80;
 
 int claw_traj[]= {40, 70};
 int claw_servoPos = 0;
-
+int claw_min = 180;
+int claw_max = 80;
 
 void grabDisc();
 void dropoffDisc();
@@ -106,53 +108,48 @@ void loop() {
 
 
 
-
 void grabDisc(){
    
   // bring bar to platform
   for (int angle = bar_traj[0]; angle >= bar_traj[1]; angle--) {
-    bar_servo.set_angle(angle);  // Move the servo to the current angle
+    int clampedAngle = clamp(angle, bar_min, bar_max);
+    bar_servo.set_angle(clampedAngle);  // Move the servo to the current angle
     delay(SWEEP_DELAY);  // Delay for smoother movement
   }
-
 
   delay(1000);
  
-    // grab disc
+  // grab disc
   for (int angle = claw_traj[1]; angle >= claw_traj[0]; angle--) {
-    claw_servo.set_angle(angle);  // Move the servo to the current angle      
+    int clampedAngle = clamp(angle, claw_min, claw_max);
+    claw_servo.set_angle(clampedAngle);  // Move the servo to the current angle      
     delay(SWEEP_DELAY);  // Delay for smoother movement
   }
 
-
   delay(1000);
 
-
-    // bring disc back to cup
+  // bring disc back to cup
   for (int angle = bar_traj[1]; angle <= bar_traj[0]; angle++) {
-    bar_servo.set_angle(angle);  // Move the servo to the current angle
+    int clampedAngle = clamp(angle, bar_min, bar_max);
+    bar_servo.set_angle(clampedAngle);  // Move the servo to the current angle
     delay(SWEEP_DELAY);  // Delay for smoother movement
   }
 
-
   delay(1000);
-
 
   // drop disc
   for (int angle = claw_traj[0]; angle <= claw_traj[1]; angle++) {
-    claw_servo.set_angle(angle);  // Move the servo to the current angle
+    int clampedAngle = clamp(angle, claw_min, claw_max);
+    claw_servo.set_angle(clampedAngle);  // Move the servo to the current angle
     delay(SWEEP_DELAY);  // Delay for smoother movement
   }
 
-
   delay(1000);
-
 
 }
 
 
 void dropoffDisc(){
-
 
     //bring bar towards patty
     for (int angle = bar_traj[1]; angle <= bar_traj[2]; angle++) {
@@ -162,16 +159,13 @@ void dropoffDisc(){
  
     delay(500);
 
-
     //grab patty
     for (int angle = claw_traj[1]; angle <= claw_traj[2]; angle++) {
       claw_servo.set_angle(angle);   // Set servo angle
       delay(SWEEP_DELAY);     // Wait before changing angle
     }
 
-
     delay(500);
-
 
     //bring bar back
     for (int angle = bar_traj[2]; angle >= bar_traj[1]; angle--) {
@@ -180,7 +174,6 @@ void dropoffDisc(){
     }
  
     delay(500);
-
 
     //release patty
     for (int angle = claw_traj[2]; angle >= claw_traj[1]; angle--) {
