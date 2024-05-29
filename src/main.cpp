@@ -38,18 +38,25 @@ T clamp(T value, T minVal, T maxVal) {
 }
 
 
-int SWEEP_DELAY = 10;
+int SWEEP_DELAY = 30;
 
+//four-bar angles
+int disc_1 = 180;
+int disc_2 = 170;
+int disc_3 = 160;
+int platform = 130;
 
-int bar_traj[]= {180, 130};
 int bar_servoPos = 0;
 int bar_min = 180;
 int bar_max = 80;
 
-int claw_traj[]= {40, 70};
+//claw angles
+int claw_open = 40;
+int claw_close = 70;
+
 int claw_servoPos = 0;
-int claw_min = 180;
-int claw_max = 80;
+int claw_min = 80;
+int claw_max = 180;
 
 void grabDisc();
 void dropoffDisc();
@@ -57,8 +64,8 @@ void dropoffDisc();
 
 int minAngle = 80;  // Minimum angle for the servo
 int maxAngle = 130;  // Maximum angle for the servo
-int startAngle_bar = bar_traj[0];  // Current angle of the servo
-int startAngle_claw = claw_traj[0];  // Current angle of the servo
+int startAngle_bar = disc_1;  // Current angle of the servo
+int startAngle_claw = claw_open;  // Current angle of the servo
 
 
 bool switchPressed = false;
@@ -76,30 +83,24 @@ void setup() {
 
 
 void loop() {
-
-
   int true_angle = bar_servo.measure_angle();  // Read the sensor value from analog pin A0 (example pin)
   int limitSwitchState_L = digitalRead(LIMIT_SWITCH_PIN_L);
   int limitSwitchState_R = digitalRead(LIMIT_SWITCH_PIN_R);
-
 
   if (limitSwitchState_L == LOW && !switchPressed_L) {
     switchPressed_L = true; // Set the flag
   }
 
-
   if (limitSwitchState_R == LOW && !switchPressed_R) {
     switchPressed_R = true; // Set the flag
   }
-
 
   if(switchPressed_L && switchPressed_R){
     switchPressed = true;
   }
 
-
   if (switchPressed) {
-    grabDisc();
+    grabDisc(disc_1);
     switchPressed_L = false;
     switchPressed_R = false;
     switchPressed = false;
@@ -108,10 +109,10 @@ void loop() {
 
 
 
-void grabDisc(){
+void grabDisc(int disc){
    
   // bring bar to platform
-  for (int angle = bar_traj[0]; angle >= bar_traj[1]; angle--) {
+  for (int angle = disc; angle >= platform; angle--) {
     int clampedAngle = clamp(angle, bar_min, bar_max);
     bar_servo.set_angle(clampedAngle);  // Move the servo to the current angle
     delay(SWEEP_DELAY);  // Delay for smoother movement
@@ -120,7 +121,7 @@ void grabDisc(){
   delay(1000);
  
   // grab disc
-  for (int angle = claw_traj[1]; angle >= claw_traj[0]; angle--) {
+  for (int angle = claw_open; angle >= claw_close; angle--) {
     int clampedAngle = clamp(angle, claw_min, claw_max);
     claw_servo.set_angle(clampedAngle);  // Move the servo to the current angle      
     delay(SWEEP_DELAY);  // Delay for smoother movement
@@ -129,7 +130,7 @@ void grabDisc(){
   delay(1000);
 
   // bring disc back to cup
-  for (int angle = bar_traj[1]; angle <= bar_traj[0]; angle++) {
+  for (int angle = platform; angle <= disc; angle++) {
     int clampedAngle = clamp(angle, bar_min, bar_max);
     bar_servo.set_angle(clampedAngle);  // Move the servo to the current angle
     delay(SWEEP_DELAY);  // Delay for smoother movement
@@ -138,7 +139,7 @@ void grabDisc(){
   delay(1000);
 
   // drop disc
-  for (int angle = claw_traj[0]; angle <= claw_traj[1]; angle++) {
+  for (int angle = claw_close; angle <= claw_open; angle++) {
     int clampedAngle = clamp(angle, claw_min, claw_max);
     claw_servo.set_angle(clampedAngle);  // Move the servo to the current angle
     delay(SWEEP_DELAY);  // Delay for smoother movement
@@ -160,7 +161,7 @@ void dropoffDisc(){
     delay(500);
 
     //grab patty
-    for (int angle = claw_traj[1]; angle <= claw_traj[2]; angle++) {
+    for (int angle = claw_open; angle <= claw_close; angle++) {
       claw_servo.set_angle(angle);   // Set servo angle
       delay(SWEEP_DELAY);     // Wait before changing angle
     }
@@ -176,7 +177,7 @@ void dropoffDisc(){
     delay(500);
 
     //release patty
-    for (int angle = claw_traj[2]; angle >= claw_traj[1]; angle--) {
+    for (int angle = claw_close; angle >= claw_open; angle--) {
       bar_servo.set_angle(angle);   // Set servo angle
       delay(SWEEP_DELAY);     // Wait before changing angle
     }
