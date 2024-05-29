@@ -5,10 +5,7 @@
 Claw::Claw(int FourBarPWMPin, int GrabbingPWMPin, int FourBarPotentiometerPin, int GrabbingPotentiometerPin): 
     fourBarServo(FourBarPWMPin, FourBarPotentiometerPin),
     grabbingServo(GrabbingPWMPin, GrabbingPotentiometerPin)
-    {
-        fourBarPotentiometerPin = FourBarPotentiometerPin;
-        grabbingPotentiometerPin = GrabbingPotentiometerPin;
-    }
+    {}
 
 void Claw::begin(){
     //Start Servos

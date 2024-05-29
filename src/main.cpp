@@ -7,7 +7,9 @@
 #include <controller.h>
 
 #include <Servo.h>
+#include <claw.h>
 
+Claw grabber(four_bar_pwm_pin, claw_pwm_pin, four_bar_potentiometer_pin, claw_potentiometer_pin);
 QTRSensors lf;
 Controller base_controller(Kp, Kd);
 Motor motors[] = {Motor(m_pin[0][0], m_pin[0][1]), 
@@ -174,28 +176,16 @@ void setup() {
   motors[3].set_speed(0);
 
   Serial.begin(9600);
+
+  grabber.begin();
 }
 
 
 
 
 void loop() {
-<<<<<<< HEAD
-=======
-  line_follow_until_junction(base_controller);
-  //print to serial all values of the line follower pins
-  // uint16_t sensors[num_line_sensors];
-  // int16_t position = lf.readLineBlack(sensors);
-  // Serial.print(position);
-  // Serial.print(" ");
-  // for (int i = 0; i < num_line_sensors; i++)
-  // {
-  //   Serial.print(sensors[i]);
-  //   Serial.print(" ");
-  // }
-  // Serial.println();
-  // delay(100);
->>>>>>> constants_switch
+  grabber.readAngles();
+  delay(500);
 }
 
 

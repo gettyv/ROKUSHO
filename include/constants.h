@@ -3,6 +3,12 @@
 constexpr int num_motors_ps = 2;
 constexpr int m_pin[][2] = {{4,5}, {6,7}, {12,13}, {3,2}};
 
+constexpr int four_bar_pwm_pin = 9;
+constexpr int four_bar_potentiometer_pin = A14;
+
+constexpr int claw_pwm_pin = 8;
+constexpr int claw_potentiometer_pin = A15;
+
 constexpr int calibration_LED_pin = 13;
 
 constexpr const int num_line_sensors = 13;

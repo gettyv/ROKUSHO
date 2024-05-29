@@ -27,8 +27,3 @@ float Servo::measure_angle()
     int angle = analogRead(_angle_pin);
     return map(angle, 0, 1023, 0, 180);
 }
-
-float Servo::get_set_angle()
-{
-    return current_angle;
-}
