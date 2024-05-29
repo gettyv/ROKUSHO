@@ -154,9 +154,9 @@ void line_follow_until_junction(Controller controller) {
     int left_speed = clamp(fwd_speed + controller_output, -max_speed, max_speed);
     int right_speed = clamp(fwd_speed - controller_output, -max_speed, max_speed);
 
-    motors[0].set_speed(-left_speed);
-    motors[1].set_speed(-left_speed);
-    motors[2].set_speed(-right_speed);
+    motors[0].set_speed(left_speed);
+    motors[1].set_speed(left_speed);
+    motors[2].set_speed(right_speed);
     motors[3].set_speed(right_speed);
 
     Serial.print(position);
@@ -167,6 +167,12 @@ void line_follow_until_junction(Controller controller) {
 
 
 void setup() {
+  // set all motor speeds to 0
+  motors[0].set_speed(0);
+  motors[1].set_speed(0);
+  motors[2].set_speed(0);
+  motors[3].set_speed(0);
+
   Serial.begin(9600);
 }
 
@@ -174,6 +180,22 @@ void setup() {
 
 
 void loop() {
+<<<<<<< HEAD
+=======
+  line_follow_until_junction(base_controller);
+  //print to serial all values of the line follower pins
+  // uint16_t sensors[num_line_sensors];
+  // int16_t position = lf.readLineBlack(sensors);
+  // Serial.print(position);
+  // Serial.print(" ");
+  // for (int i = 0; i < num_line_sensors; i++)
+  // {
+  //   Serial.print(sensors[i]);
+  //   Serial.print(" ");
+  // }
+  // Serial.println();
+  // delay(100);
+>>>>>>> constants_switch
 }
 
 
