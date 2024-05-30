@@ -18,13 +18,8 @@ Motor(m_pin[1][0], m_pin[1][1]),
 Motor(m_pin[2][0], m_pin[2][1]), 
 Motor(m_pin[3][0], m_pin[3][1])};
 
-bool picked_up = false;
-int turning_cycles = 0;
-int avoid_cycles = 0;
 int dropoff_location = 0;
 int dropoff_target = 2;
-
-
 
 void go_forward_for_time(int duration) {
   unsigned long start_time = millis();
@@ -114,6 +109,8 @@ void loop() {
   state.time_ms = millis();
   uint16_t sensors[num_line_sensors];
   state.position = lf.readLineBlack(sensors);
+
+  memcpy(state.ssr, sensors, sizeof(sensors));
   
   state.left_low_reflectance = true;
   state.right_low_reflectance = true;
@@ -132,45 +129,49 @@ void loop() {
   state.error = state.position - line_center_position;
   state.controller_output = base_controller.update(state.error);
 
+  // Decide which operating mode to be in
+
+  // Reached 90 degree left turn
+  if ((state.left_low_reflectance && !state.right_low_reflectance) && state.current_function == 0) {
+    state.current_function = 1;
+    state.counted_left_junctions++;
+    state.slow_cycles = 50;
+  }
+
+  // Reached 90 degree right turn
+  if ((state.right_low_reflectance && !state.left_low_reflectance) && state.current_function == 0) {
+    state.current_function = 2;
+    state.counted_right_junctions++;
+    state.straight_cycles = 50;
+  }
+
+  // Reached T junction
+  if (state.left_low_reflectance && state.right_low_reflectance) {
+    state.current_function = 3;
+    state.counted_T_junctions++;
+  }
+
+  // Normal Line Following
+  else {
+    state.current_function = 0;
+  }
+
   float fwd_speed = base_speed;
-  if (state.left_low_reflectance && !state.right_low_reflectance) {
-    turning_cycles = 50;
-  }
-  if (turning_cycles > 0) {
+  
+  if (state.slow_cycles > 0) {
     fwd_speed = 4;
-    turning_cycles--;
+    state.slow_cycles--;
   }
-
-  // if (allRightLowReflectance && !allLeftLowReflectance) {
-  //   dropoff_location++;
-  //   if (dropoff_location == dropoff_target) {
-  //     controller_output = 30;
-  //     int left_speed = clamp(fwd_speed + controller_output, -max_speed, max_speed);
-  //     int right_speed = clamp(fwd_speed - controller_output, -max_speed, max_speed);
-
-  //     motors[0].set_speed(-left_speed);
-  //     motors[1].set_speed(-left_speed);
-  //     motors[2].set_speed(-right_speed);
-  //     motors[3].set_speed(right_speed);
-  //     delay(1000);
-  //     motors[0].set_speed(0);
-  //     motors[1].set_speed(0);
-  //     motors[2].set_speed(0);
-  //     motors[3].set_speed(0);
-  //     delay(1e1000);
-  //   }
-  //   else {
-  //     avoid_cycles = 30;
-  //   }
-  // }
-
-  // if (avoid_cycles > 0) {
-  //   controller_output = -3;
-  //   avoid_cycles--;
-  // }
 
   state.left_speed = clamp(fwd_speed + state.controller_output, -clamp_max_speed, clamp_max_speed);
   state.right_speed = clamp(fwd_speed - state.controller_output, -clamp_max_speed, clamp_max_speed);
+
+  if (state.straight_cycles > 0) {
+    fwd_speed = 4;
+    state.left_speed = fwd_speed;
+    state.right_speed = fwd_speed;
+    state.straight_cycles--;
+  }
 
   motors[0].set_speed(state.left_speed);
   motors[1].set_speed(state.left_speed);
