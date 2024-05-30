@@ -142,7 +142,7 @@ void loop() {
   if ((state.right_low_reflectance && !state.left_low_reflectance) && state.current_function == 0) {
     state.current_function = 2;
     state.counted_right_junctions++;
-    state.straight_cycles = 50;
+    state.straight_cycles = 0;
   }
 
   // Reached T junction

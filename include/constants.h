@@ -10,8 +10,8 @@ constexpr unsigned char line_follower_pins[num_line_sensors] = {A0, A1, A2, A3, 
 constexpr const int line_center_position = 1000 * (num_line_sensors - 1) / 2;
 
 constexpr float hw_max_speed = 10;
-constexpr float clamp_max_speed = 3;
-constexpr float base_speed = 2;
+constexpr float clamp_max_speed = 10;
+constexpr float base_speed = 7;
 constexpr float turn_speed = 1;
 constexpr float Kp = 0.02;
 constexpr float Kd = 0.005;
