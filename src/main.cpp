@@ -112,18 +112,15 @@ void loop() {
 
   memcpy(state.ssr, sensors, sizeof(sensors));
   
-  state.left_low_reflectance = true;
-  state.right_low_reflectance = true;
+  state.left_low_reflectance = false;
+  state.right_low_reflectance = false;
 
-  for (int i = 0; i < num_line_sensors; i++) {
-    if (sensors[i] < 100) {
-      
-      if (i < num_line_sensors / 2) {
-        state.right_low_reflectance = false;
-      } else {
-        state.left_low_reflectance = false;
-      }
+  if (sensors[0] > 500 && sensors[1] > 500 || sensors[2] > 500) {
+      state.right_low_reflectance = true;
     }
+
+  if (sensors[10] > 500 && sensors[11] > 500 || sensors[12] > 500) {
+      state.left_low_reflectance = true;
   }
 
   state.error = state.position - line_center_position;
