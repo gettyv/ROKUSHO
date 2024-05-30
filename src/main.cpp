@@ -10,7 +10,7 @@
 #include <controller.h>
 
 State state;
-RPI rpi(9600);
+RPI rpi(19200);
 QTRSensors lf;
 Controller base_controller(Kp, Kd);
 Motor motors[] = {Motor(m_pin[0][0], m_pin[0][1]), 
@@ -33,6 +33,23 @@ void go_forward_for_time(int duration) {
   motors[1].set_speed(0);
   motors[2].set_speed(0);
   motors[3].set_speed(0);
+}
+
+void turn_left() {
+  while(true){
+  uint16_t sensors[num_line_sensors];
+  int16_t previous_position = lf.readLineBlack(sensors);
+  int solid_sensor_readings = 0;
+  for (int i = 0; i < num_line_sensors;i++) {
+    if (sensors[i] > 900) solid_sensor_readings++;
+  }
+  if (solid_sensor_readings >= 3) break;
+
+
+  }
+
+  
+
 }
 
 void turn_right() {
@@ -98,6 +115,7 @@ void setup() {
     Serial.println(i);
   }
   digitalWrite(calibration_LED_pin, LOW);
+  delay(10e3);
   rpi.sendMessage("ARDUINO_READY");
   rpi.sendMessage(state.log_header());
 }
@@ -171,7 +189,7 @@ void loop() {
   float fwd_speed = base_speed;
   
   if (state.slow_cycles > 0) {
-    fwd_speed = 4;
+    fwd_speed = 0;
     state.slow_cycles--;
   }
 
