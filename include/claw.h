@@ -1,8 +1,12 @@
+#ifndef CLAW_H
+#define CLAW_H
 #include <Servo.h>
 
 class Claw {
     Servo fourBarServo;
     Servo grabbingServo;
+    String incomingByte;
+    String command;
 
 public:
     Claw(int FourBarPWMPin, int GrabbingPWMPin, int FourBarPotentiometerPin, int GrabbingPotentiometerPin);
@@ -13,8 +17,12 @@ public:
     int getFourBarAngle();
     int getGrabbingAngle();
 
+    void sendManual();
     void grabDisc(int disc);
     void releaseDisc();
     void fourBarSweep();
     void grabberSweep();
+
 };
+
+#endif

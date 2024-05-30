@@ -23,21 +23,21 @@ constexpr const int line_center_position = 1000 * (num_line_sensors - 1) / 2;
 constexpr int calibration_iterations = 100;
 
 // Claw constants
-int SWEEP_DELAY = 20;
+constexpr int SWEEP_DELAY = 40;
 
-int bar_min = 170;
-int bar_max = 255;
+constexpr int bar_min = 60;
+constexpr int bar_max = 210;
 
-int platform = 170;
+constexpr int platform = 75;
 
-int disc1 = 250;
-int disc2 = 235;
-int disc3 = 220;
+constexpr int disc1 = 200;
+constexpr int disc2 = 180;
+constexpr int disc3 = 160;
 
-int grab_min = 30;
-int grab_max = 40;
-int grab_open = 15;
-int grab_close = 40;
+constexpr int grab_min = 80;
+constexpr int grab_max = 200;
+constexpr int grab_open = 150;
+constexpr int grab_close = 85;
 
 // Drive constants
 constexpr float max_speed = 10;

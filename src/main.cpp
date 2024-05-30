@@ -23,7 +23,17 @@ int avoid_cycles = 0;
 int dropoff_location = 0;
 int dropoff_target = 2;
 
-
+// Simple clamping function
+template <typename T>
+T clamp(T value, T minVal, T maxVal) {
+  if (value < minVal) {
+    return minVal;
+  } else if (value > maxVal) {
+    return maxVal;
+  } else {
+    return value;
+  }
+}
 
 void go_forward_for_time(int duration) {
   unsigned long start_time = millis();
@@ -172,9 +182,11 @@ void setup() {
   motors[3].set_speed(0);
 
   Serial.begin(9600);
+
   grabber.begin();
 
-  grabber.grabDisc(disc1);
+  //grabber.grabDisc(disc1);
+  //grabber.releaseDisc();
 }
 
 bool switchPressed_L = false;
@@ -182,9 +194,9 @@ bool switchPressed_R = false;
 bool switchPressed = false;
 
 void loop() {
-  
-  grabber.grabberSweep();
-  
+
+  //grabber.sendManual();
+
   /*
   int true_angle = grabber.getGrabbingAngle();  // Read the sensor value from analog pin A0 (example pin)
   int limitSwitchState_L = digitalRead(LIMIT_SWITCH_PIN_L);
