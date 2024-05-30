@@ -2,6 +2,7 @@
 
 #include <motor.h>
 #include <constants.h>
+#include <fns.h>
 #include <rpi.h>
 #include <state.h>
 
@@ -23,17 +24,7 @@ int avoid_cycles = 0;
 int dropoff_location = 0;
 int dropoff_target = 2;
 
-// Simple clamping function
-template <typename T>
-T clamp(T value, T minVal, T maxVal) {
-  if (value < minVal) {
-    return minVal;
-  } else if (value > maxVal) {
-    return maxVal;
-  } else {
-    return value;
-  }
-}
+
 
 void go_forward_for_time(int duration) {
   unsigned long start_time = millis();
