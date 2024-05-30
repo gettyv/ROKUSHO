@@ -8,6 +8,9 @@ class Claw {
     String incomingByte;
     String command;
 
+    int fourBarAngle;
+    int grabbingAngle;
+
 public:
     Claw(int FourBarPWMPin, int GrabbingPWMPin, int FourBarPotentiometerPin, int GrabbingPotentiometerPin);
     void begin();

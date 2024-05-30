@@ -24,6 +24,7 @@ constexpr int calibration_iterations = 100;
 
 // Claw constants
 constexpr int SWEEP_DELAY = 40;
+constexpr int ACTION_DELAY = 500;
 
 constexpr int bar_min = 60;
 constexpr int bar_max = 210;
@@ -31,8 +32,8 @@ constexpr int bar_max = 210;
 constexpr int platform = 75;
 
 constexpr int disc1 = 200;
-constexpr int disc2 = 180;
-constexpr int disc3 = 160;
+constexpr int disc2 = 190;
+constexpr int disc3 = 185;
 
 constexpr int grab_min = 80;
 constexpr int grab_max = 200;

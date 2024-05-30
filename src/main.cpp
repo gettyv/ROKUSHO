@@ -167,13 +167,6 @@ void line_follow_until_junction(Controller controller) {
   }
 }
 
-
-int min = 170;
-int max = 255;
-//int min = 15;
-//int max = 40;
-
-
 void setup() {
   // set all motor speeds to 0
   motors[0].set_speed(0);
@@ -185,8 +178,11 @@ void setup() {
 
   grabber.begin();
 
-  //grabber.grabDisc(disc1);
-  //grabber.releaseDisc();
+  grabber.grabDisc(disc1);
+  grabber.grabDisc(disc2);
+  grabber.grabDisc(disc3);
+  delay(1000);
+  grabber.releaseDisc();
 }
 
 bool switchPressed_L = false;
@@ -195,7 +191,7 @@ bool switchPressed = false;
 
 void loop() {
 
-  //grabber.sendManual();
+  grabber.sendManual();
 
   /*
   int true_angle = grabber.getGrabbingAngle();  // Read the sensor value from analog pin A0 (example pin)

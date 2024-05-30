@@ -9,6 +9,8 @@ Claw::Claw(int FourBarPWMPin, int GrabbingPWMPin, int FourBarPotentiometerPin, i
     {
       incomingByte = "";
       command = "";
+      fourBarAngle = disc1;
+      grabbingAngle = grab_close;
     }
 
 void Claw::begin(){
@@ -19,9 +21,9 @@ void Claw::begin(){
     // Set initial angles
     // Serial.println("Setting initial angles");
     // fourBarServo.set_angle(disc1);
-    // delay(1000);
+    // delay(ACTION_DELAY);
     // grabbingServo.set_angle(grab_open);
-    // delay(1000);
+    // delay(ACTION_DELAY);
 }
 
 void Claw::readAngles(){
@@ -77,94 +79,114 @@ void Claw::sendManual(){
 }
 void Claw::grabDisc(int disc){
 
-  // bring bar to platform
-  Serial.println("Moving bar to platform");
-  for (int angle = disc; angle >= platform; angle--) {
-    int clampedAngle = clamp(angle, bar_min, bar_max);
-    setFourBarAngle(clampedAngle);  // Move the servo to the current angle
-    delay(SWEEP_DELAY);  // Delay for smoother movement
-  }
-
-  delay(1000);
- 
-  // grab disc
-  Serial.println("Closing Grabbers");
-  for (int angle = grab_open; angle >= grab_close; angle--) {
+  Serial.println("Opening Grabbers");
+  for (int angle = grabbingAngle; angle <= grab_open; angle++) {
     int clampedAngle = clamp(angle, grab_min, grab_max);
+    grabbingAngle = clampedAngle;
     setGrabbingAngle(clampedAngle);  // Move the servo to the current angle      
     delay(SWEEP_DELAY);  // Delay for smoother movement
   }
 
-  delay(1000);
+  delay(ACTION_DELAY);
 
-  // bring disc back to cup
-  Serial.println("Moving disc to cup");
-  for (int angle = platform; angle <= disc; angle++) {
+  // bring bar to platform
+  Serial.println("Moving bar to platform");
+  for (int angle = fourBarAngle; angle >= platform; angle--) {
     int clampedAngle = clamp(angle, bar_min, bar_max);
+    fourBarAngle = clampedAngle;
     setFourBarAngle(clampedAngle);  // Move the servo to the current angle
     delay(SWEEP_DELAY);  // Delay for smoother movement
   }
 
-  delay(1000);
-
-  // drop disc
-  Serial.println("Opening Grabbers");
-  for (int angle = grab_close; angle <= grab_open; angle++) {
+  delay(ACTION_DELAY);
+ 
+  // grab disc
+  Serial.println("Closing Grabbers");
+  for (int angle = grabbingAngle; angle >= grab_close; angle--) {
     int clampedAngle = clamp(angle, grab_min, grab_max);
-    setGrabbingAngle(clampedAngle);  // Move the servo to the current angle
+    grabbingAngle = clampedAngle;
+    setGrabbingAngle(clampedAngle);  // Move the servo to the current angle      
     delay(SWEEP_DELAY);  // Delay for smoother movement
   }
 
-  delay(1000);
+  delay(ACTION_DELAY);
+
+  // bring disc back to cup
+  Serial.println("Moving disc to cup");
+  for (int angle = fourBarAngle; angle <= disc; angle++) {
+    int clampedAngle = clamp(angle, bar_min, bar_max);
+    fourBarAngle = clampedAngle;
+    setFourBarAngle(clampedAngle);  // Move the servo to the current angle
+    delay(SWEEP_DELAY);  // Delay for smoother movement
+  }
  
 }
 
 void Claw::releaseDisc(){
-  
-    //bring bar towards patty
-    Serial.println("Moving bar to disc holder");
-    setFourBarAngle(disc1);
-    /*
-    for (int angle = disc1; angle <= bar_max; angle++) {
-      setFourBarAngle(angle);   // Set servo angle
-      delay(SWEEP_DELAY);     // Wait before changing angle
-    }*/
- 
-    delay(1000);
 
-    //grab patty
-    Serial.println("Closing Grabbers");
-    for (int angle = grab_open; angle >= grab_close; angle--) {
-      setGrabbingAngle(angle);   // Set servo angle
-      delay(SWEEP_DELAY);     // Wait before changing angle
-    }
+  //open grabber
+  Serial.println("Opening Grabbers");
+  for (int angle = grabbingAngle; angle <= grab_open; angle++) {
+    int clampedAngle = clamp(angle, grab_min, grab_max);
+    grabbingAngle = clampedAngle;
+    setGrabbingAngle(clampedAngle);  // Move the servo to the current angle      
+    delay(SWEEP_DELAY);  // Delay for smoother movement
+  }
 
-    delay(1000);
+  delay(ACTION_DELAY);
 
-    //bring bar to platform
-    Serial.println("Moving bar to platform");
-    for (int angle = disc1; angle >= platform; angle--) {
-      setFourBarAngle(angle);   // Set servo angle
-      delay(SWEEP_DELAY);     // Wait before changing angle
-    }
- 
-    delay(1000);
+  // bring disc back to cup
+  Serial.println("Moving disc to cup");
+  for (int angle = fourBarAngle; angle <= disc1; angle++) {
+    int clampedAngle = clamp(angle, bar_min, bar_max);
+    fourBarAngle = clampedAngle;
+    setFourBarAngle(clampedAngle);  // Move the servo to the current angle
+    delay(SWEEP_DELAY);  // Delay for smoother movement
+  }
 
-    //release patty
-    Serial.println("Opening Grabbers");
-    for (int angle = grab_close; angle <= grab_open; angle++) {
-      setGrabbingAngle(angle);   // Set servo angle
-      delay(SWEEP_DELAY);     // Wait before changing angle
-    }
-    
-    delay(1000);
+  delay(ACTION_DELAY);
 
-    //bring bar back to disc holder
-    Serial.println("Moving bar to disc holder");
-    for (int angle = platform; angle <= disc1; angle++) {
-      setFourBarAngle(angle);   // Set servo angle
-      delay(SWEEP_DELAY);     // Wait before changing angle
-    }
+  //close grabber
+  Serial.println("Closing Grabbers");
+  for (int angle = grabbingAngle; angle >= grab_close; angle--) {
+    int clampedAngle = clamp(angle, grab_min, grab_max);
+    grabbingAngle = clampedAngle;
+    setGrabbingAngle(clampedAngle);  // Move the servo to the current angle      
+    delay(SWEEP_DELAY);  // Delay for smoother movement
+  }
+
+  delay(ACTION_DELAY);
+
+  // bring bar to platform
+  Serial.println("Moving bar to platform");
+  for (int angle = fourBarAngle; angle >= platform; angle--) {
+    int clampedAngle = clamp(angle, bar_min, bar_max);
+    fourBarAngle = clampedAngle;
+    setFourBarAngle(clampedAngle);  // Move the servo to the current angle
+    delay(SWEEP_DELAY);  // Delay for smoother movement
+  }
+
+  delay(ACTION_DELAY);
+
+  //open grabber
+  Serial.println("Opening Grabbers");
+  for (int angle = grabbingAngle; angle <= grab_open; angle++) {
+    int clampedAngle = clamp(angle, grab_min, grab_max);
+    grabbingAngle = clampedAngle;
+    setGrabbingAngle(clampedAngle);  // Move the servo to the current angle      
+    delay(SWEEP_DELAY);  // Delay for smoother movement
+  }
+
+  delay(ACTION_DELAY);
+
+  // bring bar back to cup
+  Serial.println("Moving disc to cup");
+  for (int angle = fourBarAngle; angle <= disc1; angle++) {
+    int clampedAngle = clamp(angle, bar_min, bar_max);
+    fourBarAngle = clampedAngle;
+    setFourBarAngle(clampedAngle);  // Move the servo to the current angle
+    delay(SWEEP_DELAY);  // Delay for smoother movement
+  }
 }
 
 
@@ -179,7 +201,7 @@ void Claw::fourBarSweep(){
     delay(SWEEP_DELAY);     // Wait before changing angle
   }
 
-  delay(1000);
+  delay(ACTION_DELAY);
 
   //bring bar back
   for (int PWM = bar_max; PWM >= bar_min; PWM--) {
@@ -190,7 +212,7 @@ void Claw::fourBarSweep(){
     delay(SWEEP_DELAY);     // Wait before changing angle
   }
 
-  delay(1000);
+  delay(ACTION_DELAY);
 }
 
 void Claw::grabberSweep(){
@@ -204,7 +226,7 @@ void Claw::grabberSweep(){
     delay(SWEEP_DELAY);     // Wait before changing angle
   }
 
-  delay(1000);
+  delay(ACTION_DELAY);
 
   //bring bar back
   for (int PWM = grab_max; PWM >= grab_min; PWM--) {
@@ -215,7 +237,7 @@ void Claw::grabberSweep(){
     delay(SWEEP_DELAY);     // Wait before changing angle
   }
 
-  delay(1000);
+  delay(ACTION_DELAY);
 
 }
 
