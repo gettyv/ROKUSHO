@@ -26,7 +26,7 @@ void State::reset(){
 }
 
 String State::log(){
-    return String(time_ms) + ", " + current_function + ", " + String(position) + ", " + String(left_low_reflectance) + ", " + String(right_low_reflectance) + ", " + String(error) + ", " + String(controller_output) + ", " + String(left_speed) + ", " + String(right_speed) + "\n";
+    return String(time_ms) + "," + current_function + "," + String(position) + "," + String(left_low_reflectance) + "," + String(right_low_reflectance) + "," + String(error) + "," + String(controller_output) + "," + String(left_speed) + "," + String(right_speed) + "\n";
 }
 
 String State::log_header(){

@@ -11,7 +11,7 @@ class State{
 
         // State Variables
         unsigned long time_ms;
-        String current_function;
+        int current_function;
         int position;
         bool left_low_reflectance;
         bool right_low_reflectance;
@@ -21,7 +21,7 @@ class State{
         float right_speed;
 
     private:
-        String header = "time_ms, current_function, position, left_low_reflectance, right_low_reflectance, error, controller_output, left_speed, right_speed\n";
+        String header = "time_ms,current_function,position,left_low_reflectance,right_low_reflectance,error,controller_output,left_speed,right_speed\n";
 };
 
 #endif
