@@ -119,13 +119,13 @@ void loop() {
   int left_turn_cutoff_index = 8;
 
   for (int i = num_line_sensors-1; i > right_turn_cutoff_index; i--) {
-    if (sensors[i] < 500) {
+    if (sensors[i] < 700) {
       state.left_low_reflectance = false;
     }
   }
 
   for (int i = 0; i < left_turn_cutoff_index; i++) {
-    if (sensors[i] < 500) {
+    if (sensors[i] < 700) {
       state.right_low_reflectance = false;
     }
   }
