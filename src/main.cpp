@@ -112,16 +112,31 @@ void loop() {
 
   memcpy(state.ssr, sensors, sizeof(sensors));
   
-  state.left_low_reflectance = false;
-  state.right_low_reflectance = false;
+  state.left_low_reflectance = true;
+  state.right_low_reflectance = true;
 
-  if (sensors[0] > 500 && sensors[1] > 500 || sensors[2] > 500) {
-      state.right_low_reflectance = true;
+  int right_turn_cutoff_index = 4;
+  int left_turn_cutoff_index = 8;
+
+  for (int i = num_line_sensors-1; i > right_turn_cutoff_index; i--) {
+    if (sensors[i] < 500) {
+      state.left_low_reflectance = false;
     }
-
-  if (sensors[10] > 500 && sensors[11] > 500 || sensors[12] > 500) {
-      state.left_low_reflectance = true;
   }
+
+  for (int i = 0; i < left_turn_cutoff_index; i++) {
+    if (sensors[i] < 500) {
+      state.right_low_reflectance = false;
+    }
+  }
+
+  // if (sensors[0] > 500 && sensors[1] > 500 && sensors[2] > 500) {
+  //     state.right_low_reflectance = true;
+  //   }
+
+  // if (sensors[10] > 500 && sensors[11] > 500 && sensors[12] > 500) {
+  //     state.left_low_reflectance = true;
+  // }
 
   state.error = state.position - line_center_position;
   state.controller_output = base_controller.update(state.error);
@@ -136,14 +151,14 @@ void loop() {
   }
 
   // Reached 90 degree right turn
-  if ((state.right_low_reflectance && !state.left_low_reflectance) && state.current_function == 0) {
+  else if ((state.right_low_reflectance && !state.left_low_reflectance) && state.current_function == 0) {
     state.current_function = 2;
     state.counted_right_junctions++;
     state.straight_cycles = 0;
   }
 
   // Reached T junction
-  if (state.left_low_reflectance && state.right_low_reflectance) {
+  else if ((state.left_low_reflectance && state.right_low_reflectance) && state.current_function == 0) {
     state.current_function = 3;
     state.counted_T_junctions++;
   }
