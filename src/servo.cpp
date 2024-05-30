@@ -19,7 +19,8 @@ void Servo::begin()
 void Servo::set_angle(int angle)
 {
     int pwm_command = map(angle, 0, 180, 0, 255);
-    analogWrite(_pwm_pin, pwm_command);
+    //analogWrite(_pwm_pin, pwm_command);
+    analogWrite(_pwm_pin, angle);
 }
 
 float Servo::measure_angle()

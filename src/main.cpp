@@ -23,17 +23,7 @@ int avoid_cycles = 0;
 int dropoff_location = 0;
 int dropoff_target = 2;
 
-// Simple clamping function
-template <typename T>
-T clamp(T value, T minVal, T maxVal) {
-  if (value < minVal) {
-    return minVal;
-  } else if (value > maxVal) {
-    return maxVal;
-  } else {
-    return value;
-  }
-}
+
 
 void go_forward_for_time(int duration) {
   unsigned long start_time = millis();
@@ -168,6 +158,12 @@ void line_follow_until_junction(Controller controller) {
 }
 
 
+int min = 170;
+int max = 255;
+//int min = 15;
+//int max = 40;
+
+
 void setup() {
   // set all motor speeds to 0
   motors[0].set_speed(0);
@@ -176,16 +172,43 @@ void setup() {
   motors[3].set_speed(0);
 
   Serial.begin(9600);
-
   grabber.begin();
+
+  grabber.grabDisc(disc1);
 }
 
-
-
+bool switchPressed_L = false;
+bool switchPressed_R = false;
+bool switchPressed = false;
 
 void loop() {
-  grabber.readAngles();
-  delay(500);
+  
+  grabber.grabberSweep();
+  
+  /*
+  int true_angle = grabber.getGrabbingAngle();  // Read the sensor value from analog pin A0 (example pin)
+  int limitSwitchState_L = digitalRead(LIMIT_SWITCH_PIN_L);
+  int limitSwitchState_R = digitalRead(LIMIT_SWITCH_PIN_R);
+
+  if (limitSwitchState_L == LOW && !switchPressed_L) {
+    switchPressed_L = true; // Set the flag
+  }
+
+  if (limitSwitchState_R == LOW && !switchPressed_R) {
+    switchPressed_R = true; // Set the flag
+  }
+
+  if(switchPressed_L && switchPressed_R){
+    switchPressed = true;
+  }
+
+  if (switchPressed) {
+    grabber.grabDisc(disc1);
+    switchPressed_L = false;
+    switchPressed_R = false;
+    switchPressed = false;
+  }
+  */
 }
 
 
