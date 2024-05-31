@@ -198,14 +198,14 @@ void loop() {
       break;
     case 1: // 90 degree left turn
 
-      state.left_speed = -turn_speed;
-      state.right_speed = turn_speed;
+      state.left_speed = turn_speed;
+      state.right_speed = -turn_speed;
 
       // Code for 90 degree left turn mode
       break;
     case 2: // 90 degree right turn
-      state.left_speed = turn_speed;
-      state.right_speed = -turn_speed;
+      state.left_speed = -turn_speed;
+      state.right_speed = turn_speed;
       break;
     default:
       state.current_function = -11;
