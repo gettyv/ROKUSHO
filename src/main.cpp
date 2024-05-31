@@ -211,20 +211,23 @@ void loop() {
       {
         if (!state.left_limit_switch && !state.right_limit_switch) {
           // DO GRAB
-            motors[0].set_speed(0);
-            motors[1].set_speed(0);
-            motors[2].set_speed(0);
-            motors[3].set_speed(0);
+          motors[0].set_speed(0);
+          motors[1].set_speed(0);
+          motors[2].set_speed(0);
+          motors[3].set_speed(0);
           delay(3e3);
 
           state.current_function = 222;
         }
+        break;
       }
       case 222: // Reversing from obj
       {
         if (state.left_low_reflectance && state.right_low_reflectance) {
           state.current_function = 1;
+          state.slow_cycles = 10;
         }
+        break;
       }
       case 3: // placing the object
         break; //just stay here for now
