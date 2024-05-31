@@ -210,12 +210,12 @@ void loop() {
       state.right_speed = clamp(state.base_speed - state.controller_output, -clamp_max_speed, clamp_max_speed);
       break;
     case 220:
-      state.left_speed = 0;
-      state.right_speed = 10;
-      break;
-    case 221:
       state.left_speed = 10;
       state.right_speed = 0;
+      break;
+    case 221:
+      state.left_speed = 0;
+      state.right_speed = 10;
       break;
     case 222: // Reverse Line Follow
       state.error = state.position - line_center_position;
