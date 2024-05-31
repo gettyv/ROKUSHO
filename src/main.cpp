@@ -178,7 +178,7 @@ void loop() {
       case 2: // 90 degree right turn
         int solid_sensor_readings = 0;
         for (int i = 0; i < num_line_sensors;i++) {
-          if (sensors[i] > 900) solid_sensor_readings++;
+          if (sensors[i] > 800) solid_sensor_readings++;
         }
         if (solid_sensor_readings >= 3) state.current_function = 0;
         break;
