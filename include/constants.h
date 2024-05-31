@@ -13,8 +13,8 @@ constexpr float hw_max_speed = 10;
 constexpr float clamp_max_speed = 10;
 constexpr float base_speed = 8;
 constexpr float turn_speed = 10;
-constexpr float Kp = 0.02;
-constexpr float Kd = 0.005;
+constexpr float Kp = 0.005;
+constexpr float Kd = 0.0025;
 
 constexpr int calibration_iterations = 100;
 #endif
