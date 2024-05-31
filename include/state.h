@@ -29,6 +29,7 @@ class State{
         int straight_cycles;
         int left_limit_switch;
         int right_limit_switch;
+        int disk_num;
 
     private:
     String header = "time_ms,current_function,position,left_low_reflectance,right_low_reflectance,error,controller_output,left_speed,right_speed,counted_left_junctions,counted_right_junctions,counted_T_junctions,slow_cycles,straight_cycles,left_limit_switch,right_limit_switch,ssr1,ssr2,ssr3,ssr4,ssr5,ssr6,ssr7,ssr8,ssr9,ssr10,ssr11,ssr12,ssr13\n";

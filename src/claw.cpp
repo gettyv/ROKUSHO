@@ -9,7 +9,7 @@ Claw::Claw(int FourBarPWMPin, int GrabbingPWMPin, int FourBarPotentiometerPin, i
     {
       incomingByte = "";
       command = "";
-      fourBarAngle = disc1;
+      fourBarAngle = disc_positions[0];
       grabbingAngle = grab_close;
     }
 
@@ -137,7 +137,7 @@ void Claw::releaseDisc(){
 
   // bring disc back to cup
   Serial.println("Moving disc to cup");
-  for (int angle = fourBarAngle; angle <= disc1; angle++) {
+  for (int angle = fourBarAngle; angle <= disc_positions[0]; angle++) {
     int clampedAngle = clamp(angle, bar_min, bar_max);
     fourBarAngle = clampedAngle;
     setFourBarAngle(clampedAngle);  // Move the servo to the current angle
@@ -181,7 +181,7 @@ void Claw::releaseDisc(){
 
   // bring bar back to cup
   Serial.println("Moving disc to cup");
-  for (int angle = fourBarAngle; angle <= disc1; angle++) {
+  for (int angle = fourBarAngle; angle <= disc_positions[0]; angle++) {
     int clampedAngle = clamp(angle, bar_min, bar_max);
     fourBarAngle = clampedAngle;
     setFourBarAngle(clampedAngle);  // Move the servo to the current angle

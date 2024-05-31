@@ -24,20 +24,6 @@ Motor(m_pin[3][0], m_pin[3][1])};
 int dropoff_location = 6;
 int dropoff_target = 2;
 
-void go_forward_for_time(int duration) {
-  unsigned long start_time = millis();
-  while (millis() - start_time < duration) {
-    motors[0].set_speed(base_speed);
-    motors[1].set_speed(base_speed);
-    motors[2].set_speed(-base_speed);
-    motors[3].set_speed(-base_speed);
-  }
-  motors[0].set_speed(0);
-  motors[1].set_speed(0);
-  motors[2].set_speed(0);
-  motors[3].set_speed(0);
-}
-
 void setup() {
   rpi.begin();
   if (rpi.wait_rpi_ready(1e6) == 1) {
@@ -129,6 +115,9 @@ void loop() {
           // state.current_function = 3;
           state.counted_T_junctions++;
           state.slow_cycles = 10;
+
+          //@ all T junctions take a right
+          state.current_function = 2;
         }
         break;
 
@@ -150,15 +139,30 @@ void loop() {
         if (right_solid_sensor_readings >= 3) state.current_function = 22;
         }
         break;
-      case 22: // Line follow until grab, then grab
+      case 22: // Line follow until wall then grab or release
       {
         if (!state.left_limit_switch && !state.right_limit_switch) {
           motors[0].set_speed(0);
           motors[1].set_speed(0);
           motors[2].set_speed(0);
           motors[3].set_speed(0);
-
-          grabber.releaseDisc();
+          
+          switch (state.disk_num) {
+            case 0:
+              grabber.grabDisc(disc_positions[state.disk_num]);
+              state.disk_num++;
+              break;
+            case 1:
+              grabber.grabDisc(disc_positions[state.disk_num]);
+              state.disk_num++;
+              break;
+            case 2:
+              grabber.grabDisc(disc_positions[state.disk_num]);
+              state.disk_num++;
+              break;
+            case 3:
+              grabber.releaseDisc();
+          }
 
           state.current_function = 222;
         }
