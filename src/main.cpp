@@ -128,8 +128,8 @@ void loop() {
   state.left_low_reflectance = true;
   state.right_low_reflectance = true;
 
-  int right_turn_cutoff_index = 3;
-  int left_turn_cutoff_index = 9;
+  int right_turn_cutoff_index = 4;
+  int left_turn_cutoff_index = 8;
 
   for (int i = num_line_sensors-1; i > right_turn_cutoff_index; i--) {
     if (sensors[i] < 700) {
@@ -175,7 +175,7 @@ void loop() {
 
       case 1: // 90 degree left turn
         int left_solid_sensor_readings = 0;
-        for (int i = num_line_sensors-1; i > right_turn_cutoff_index;i--) {
+        for (int i = num_line_sensors-1; i > right_turn_cutoff_index; i--) {
           if (sensors[i] > 800) left_solid_sensor_readings++;
         }
         if (left_solid_sensor_readings >= 3) state.current_function = 0;
@@ -183,7 +183,7 @@ void loop() {
 
       case 2: // 90 degree right turn
         int right_solid_sensor_readings = 0;
-        for (int i = 0; i < left_turn_cutoff_index;i++) {
+        for (int i = 0; i < left_turn_cutoff_index; i++) {
           if (sensors[i] > 800) right_solid_sensor_readings++;
         }
         if (right_solid_sensor_readings >= 3) state.current_function = 0;
