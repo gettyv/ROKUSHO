@@ -168,7 +168,7 @@ void loop() {
 
         // Reached T junction
         else if (state.left_low_reflectance && state.right_low_reflectance) {
-          state.current_function = 3;
+          // state.current_function = 3;
           state.counted_T_junctions++;
           state.slow_cycles = 5;
         }
@@ -184,7 +184,7 @@ void loop() {
         break;
       default:
         state.current_function = -1;
-        delay(1e6);
+        // delay(1e6);
         break;
     }
   }
@@ -209,7 +209,7 @@ void loop() {
       break;
     default:
       state.current_function = -11;
-      delay(1e6);
+      // delay(1e6);
       break;
   }
 
