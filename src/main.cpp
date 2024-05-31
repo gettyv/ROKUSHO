@@ -140,8 +140,10 @@ void loop() {
         }
         break;
       case 22: // Line follow until wall then grab or release
+      case 221:
+      case 220:
       {
-        if (!state.left_limit_switch || !state.right_limit_switch) {
+        if (!state.left_limit_switch && !state.right_limit_switch) {
           motors[0].set_speed(0);
           motors[1].set_speed(0);
           motors[2].set_speed(0);
@@ -167,6 +169,14 @@ void loop() {
 
           state.current_function = 222;
         }
+        else if (!state.left_limit_switch){
+          state.current_function = 220;
+        }
+        else if (!state.right_limit_switch)
+        {
+          state.current_function = 221;
+        }
+          
         break;
       }
       case 222: // Reversing from obj
@@ -198,6 +208,14 @@ void loop() {
       state.controller_output = base_controller.update(state.error);
       state.left_speed = clamp(state.base_speed + state.controller_output, -clamp_max_speed, clamp_max_speed);
       state.right_speed = clamp(state.base_speed - state.controller_output, -clamp_max_speed, clamp_max_speed);
+      break;
+    case 220:
+      state.left_speed = 0;
+      state.right_speed = 10;
+      break;
+    case 221:
+      state.left_speed = 10;
+      state.right_speed = 0;
       break;
     case 222: // Reverse Line Follow
       state.error = state.position - line_center_position;
