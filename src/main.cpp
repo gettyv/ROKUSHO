@@ -18,7 +18,7 @@ Motor(m_pin[1][0], m_pin[1][1]),
 Motor(m_pin[2][0], m_pin[2][1]), 
 Motor(m_pin[3][0], m_pin[3][1])};
 
-int dropoff_location = 0;
+int dropoff_location = 6;
 int dropoff_target = 2;
 
 void go_forward_for_time(int duration) {
@@ -45,9 +45,6 @@ void turn_left() {
   }
   if (solid_sensor_readings >= 3) break;
   }
-
-  
-
 }
 
 void turn_right() {
@@ -161,9 +158,10 @@ void loop() {
 
         // Reached 90 degree right turn
         else if (state.right_low_reflectance && !state.left_low_reflectance) {
-          state.current_function = 2;
-          state.counted_right_junctions++;
           state.slow_cycles = 10;
+          if (state.counted_right_junctions++ == dropoff_location){
+            state.current_function = 2;
+          }
         }
 
         // Reached T junction
@@ -172,7 +170,6 @@ void loop() {
           state.counted_T_junctions++;
           state.slow_cycles = 10;
         }
-          
         break;
       case 1: // 90 degree left turn
       case 2: // 90 degree right turn
