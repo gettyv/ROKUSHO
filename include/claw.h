@@ -1,6 +1,6 @@
 #ifndef CLAW_H
 #define CLAW_H
-#include <Servo.h>
+#include <servo.h>
 
 class Claw {
     Servo fourBarServo;

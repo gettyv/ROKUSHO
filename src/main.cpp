@@ -8,9 +8,8 @@
 
 #include <QTRSensors.h>
 #include <controller.h>
-
-#include <Servo.h>
 #include <claw.h>
+
 State state;
 RPI rpi(19200);
 

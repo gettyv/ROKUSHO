@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <claw.h>
-#include <Servo.h>
+#include <servo.h>
 #include <constants.h>
 
 Claw::Claw(int FourBarPWMPin, int GrabbingPWMPin, int FourBarPotentiometerPin, int GrabbingPotentiometerPin): 
