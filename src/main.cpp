@@ -211,7 +211,12 @@ void loop() {
       {
         if (!state.left_limit_switch && !state.right_limit_switch) {
           // DO GRAB
+            motors[0].set_speed(0);
+            motors[1].set_speed(0);
+            motors[2].set_speed(0);
+            motors[3].set_speed(0);
           delay(3e3);
+
           state.current_function = 222;
         }
       }
@@ -241,8 +246,8 @@ void loop() {
     case 222: // Reverse Line Follow
       state.error = state.position - line_center_position;
       state.controller_output = base_controller.update(state.error);
-      state.left_speed = clamp(-base_speed/2 - state.controller_output, -clamp_max_speed, clamp_max_speed);
-      state.right_speed = clamp(-base_speed/2 + state.controller_output, -clamp_max_speed, clamp_max_speed);
+      state.left_speed = clamp(-base_speed - state.controller_output, -clamp_max_speed, clamp_max_speed);
+      state.right_speed = clamp(-base_speed + state.controller_output, -clamp_max_speed, clamp_max_speed);
       break;
     case 1: // 90 degree left turn
 
