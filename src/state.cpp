@@ -3,7 +3,7 @@
 
 State::State(){
     time_ms = 0;
-    current_function = -1;
+    current_function = 0;
     position = 0;
     left_low_reflectance = false;
     right_low_reflectance = false;
@@ -23,7 +23,7 @@ State::State(){
 
 void State::reset(){
     time_ms = 0;
-    current_function = -1;
+    current_function = 0;
     position = 0;
     left_low_reflectance = false;
     right_low_reflectance = false;

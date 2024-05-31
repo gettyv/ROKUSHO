@@ -146,38 +146,47 @@ void loop() {
     }
   }
 
-  switch (state.current_function) {
-    case 0: // Normal Line Following
-      if (state.left_low_reflectance && !state.right_low_reflectance) {
-        state.current_function = 1;
-        state.counted_left_junctions++;
-      }
+  if (state.slow_cycles > 0) {
+    state.slow_cycles--;
+  }
 
-      // Reached 90 degree right turn
-      else if (state.right_low_reflectance && !state.left_low_reflectance) {
-        state.current_function = 2;
-        state.counted_right_junctions++;
-      }
+  else {
+    switch (state.current_function) {
+      case 0: // Normal Line Following
+        if (state.left_low_reflectance && !state.right_low_reflectance) {
+          state.current_function = 1;
+          state.counted_left_junctions++;
+          state.slow_cycles = 5;
+        }
 
-      // Reached T junction
-      else if (state.left_low_reflectance && state.right_low_reflectance) {
-        state.current_function = 3;
-        state.counted_T_junctions++;
-      }
-        
-      break;
-    case 1: // 90 degree left turn
-    case 2: // 90 degree right turn
-      int solid_sensor_readings = 0;
-      for (int i = 0; i < num_line_sensors;i++) {
-        if (sensors[i] > 900) solid_sensor_readings++;
-      }
-      if (solid_sensor_readings >= 3) state.current_function = 0;
-      break;
-    default:
-      state.current_function = -1;
-      delay(1e6);
-      break;
+        // Reached 90 degree right turn
+        else if (state.right_low_reflectance && !state.left_low_reflectance) {
+          state.current_function = 2;
+          state.counted_right_junctions++;
+          state.slow_cycles = 5;
+        }
+
+        // Reached T junction
+        else if (state.left_low_reflectance && state.right_low_reflectance) {
+          state.current_function = 3;
+          state.counted_T_junctions++;
+          state.slow_cycles = 5;
+        }
+          
+        break;
+      case 1: // 90 degree left turn
+      case 2: // 90 degree right turn
+        int solid_sensor_readings = 0;
+        for (int i = 0; i < num_line_sensors;i++) {
+          if (sensors[i] > 900) solid_sensor_readings++;
+        }
+        if (solid_sensor_readings >= 3) state.current_function = 0;
+        break;
+      default:
+        state.current_function = -1;
+        delay(1e6);
+        break;
+    }
   }
 
   switch (state.current_function) {
