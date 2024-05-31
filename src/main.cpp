@@ -9,22 +9,12 @@
 #include <QTRSensors.h>
 #include <controller.h>
 
-<<<<<<< HEAD
-enum STATES {
-  NORMAL_LINE_FOLLOWING,
-  LEFT_TURN,
-  RIGHT_TURN,
-  PLACING_OBJECT
-};
-
-State state;
-RPI rpi(19200);
-=======
 #include <Servo.h>
 #include <claw.h>
+State state;
+RPI rpi(19200);
 
 Claw grabber(four_bar_pwm_pin, claw_pwm_pin, four_bar_potentiometer_pin, claw_potentiometer_pin);
->>>>>>> grabber
 QTRSensors lf;
 Controller base_controller(Kp, Kd);
 Motor motors[] = {Motor(m_pin[0][0], m_pin[0][1]), 
@@ -49,63 +39,6 @@ void go_forward_for_time(int duration) {
   motors[3].set_speed(0);
 }
 
-void turn_left() {
-  while(true){
-  uint16_t sensors[num_line_sensors];
-  int16_t previous_position = lf.readLineBlack(sensors);
-  int solid_sensor_readings = 0;
-  for (int i = 0; i < num_line_sensors;i++) {
-    if (sensors[i] > 900) solid_sensor_readings++;
-  }
-  if (solid_sensor_readings >= 3) break;
-  }
-}
-
-void turn_right() {
-  uint16_t sensors[num_line_sensors];
-  int16_t previous_position = lf.readLineBlack(sensors);
-  
-  motors[0].set_speed(turn_speed);
-  motors[1].set_speed(turn_speed);
-  motors[2].set_speed(-turn_speed);
-  motors[3].set_speed(-turn_speed);
-
-  bool is_decreasing = true;
-  while (is_decreasing) {
-    Serial.println("Decreasing position");
-    int16_t position = lf.readLineBlack(sensors);
-
-    // Check if the readlineblack value is decreasing
-    if (position >= previous_position) {
-      is_decreasing = false;
-    }
-    previous_position = position;
-  }
-
-  // Now the average should be around the center, then snap to the right when it hits the line
-  while (true) {
-    Serial.println("Can't find position");
-    int16_t position = lf.readLineBlack(sensors);
-    if (position > line_center_position + 3000) {
-      break;
-    }
-  }
-
-  // Now just need to control to be onto the line
-  while (true) {
-    Serial.println("Final Turn Stretch");
-    int16_t position = lf.readLineBlack(sensors);
-    if (abs(position - line_center_position) < 500) {
-      break;
-    }
-  }
-  motors[0].set_speed(0);
-  motors[1].set_speed(0);
-  motors[2].set_speed(0);
-  motors[3].set_speed(0);
-}
-
-
 void setup() {
   rpi.begin();
   if (rpi.wait_rpi_ready(1e6) == 1) {
@@ -118,6 +51,9 @@ void setup() {
   pinMode(limit_switch_left, INPUT_PULLUP);
   pinMode(limit_switch_right, INPUT_PULLUP);
 
+  grabber.begin();
+
+  
 
   digitalWrite(calibration_LED_pin, HIGH);
   for (uint8_t i = 0; i < calibration_iterations; i++)
@@ -218,12 +154,12 @@ void loop() {
       case 22: // Line follow until grab, then grab
       {
         if (!state.left_limit_switch && !state.right_limit_switch) {
-          // DO GRAB
           motors[0].set_speed(0);
           motors[1].set_speed(0);
           motors[2].set_speed(0);
           motors[3].set_speed(0);
-          delay(3e3);
+
+          grabber.releaseDisc();
 
           state.current_function = 222;
         }
