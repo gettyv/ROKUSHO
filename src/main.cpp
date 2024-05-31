@@ -57,6 +57,9 @@ bool switchPressed_L = false;
 bool switchPressed_R = false;
 bool switchPressed = false;
 
+int left_reflectance_count = 0;
+int right_reflectance_count = 0;
+
 void loop() {
   state.time_ms = millis();
 
@@ -74,18 +77,6 @@ void loop() {
   int right_turn_cutoff_index = 4;
   int left_turn_cutoff_index = 8;
 
-  for (int i = num_line_sensors-1; i > right_turn_cutoff_index; i--) {
-    if (sensors[i] < 700) {
-      state.left_low_reflectance = false;
-    }
-  }
-
-  for (int i = 0; i < left_turn_cutoff_index; i++) {
-    if (sensors[i] < 700) {
-      state.right_low_reflectance = false;
-    }
-  }
-
   if (state.slow_cycles > 0) {
     state.slow_cycles--;
   }
@@ -93,7 +84,25 @@ void loop() {
   else {
     switch (state.current_function) {
       case 0: // Normal Line Following
+        for (int i = num_line_sensors-1; i > right_turn_cutoff_index; i--) {
+          if (sensors[i] < 700) {
+            left_reflectance_count++;
+            if (left_reflectance_count > 1) {
+              state.left_low_reflectance = false;
+              left_reflectance_count = 0;
+            }
+          }
+        }
 
+        for (int i = 0; i < left_turn_cutoff_index; i++) {
+          if (sensors[i] < 700) {
+            right_reflectance_count++;
+            if (right_reflectance_count > 1) {
+              state.right_low_reflectance = false;
+              right_reflectance_count = 0;
+            }
+          }
+        }
         // Reached 90 degree left turn
         if (state.left_low_reflectance && !state.right_low_reflectance) {
           state.current_function = 1;
@@ -114,7 +123,7 @@ void loop() {
         else if (state.left_low_reflectance && state.right_low_reflectance) {
           // state.current_function = 3;
           state.counted_T_junctions++;
-          state.slow_cycles = 15;
+          state.slow_cycles = 10;
 
           //@ all T junctions take a right
           state.current_function = 2;
