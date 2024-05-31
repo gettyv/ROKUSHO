@@ -224,6 +224,7 @@ void loop() {
       {
         if (state.left_low_reflectance && state.right_low_reflectance) {
           state.current_function = 1;
+          state.slow_cycles = 10;
         }
       }
       case 3: // placing the object
