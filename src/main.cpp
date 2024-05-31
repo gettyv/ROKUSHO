@@ -9,6 +9,7 @@
 #include <QTRSensors.h>
 #include <controller.h>
 
+<<<<<<< HEAD
 enum STATES {
   NORMAL_LINE_FOLLOWING,
   LEFT_TURN,
@@ -18,6 +19,12 @@ enum STATES {
 
 State state;
 RPI rpi(19200);
+=======
+#include <Servo.h>
+#include <claw.h>
+
+Claw grabber(four_bar_pwm_pin, claw_pwm_pin, four_bar_potentiometer_pin, claw_potentiometer_pin);
+>>>>>>> grabber
 QTRSensors lf;
 Controller base_controller(Kp, Kd);
 Motor motors[] = {Motor(m_pin[0][0], m_pin[0][1]), 
@@ -125,8 +132,9 @@ void setup() {
   rpi.sendMessage(state.log_header());
 }
 
-
-
+bool switchPressed_L = false;
+bool switchPressed_R = false;
+bool switchPressed = false;
 
 void loop() {
   state.time_ms = millis();
