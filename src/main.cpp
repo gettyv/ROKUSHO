@@ -9,6 +9,13 @@
 #include <QTRSensors.h>
 #include <controller.h>
 
+enum STATES {
+  NORMAL_LINE_FOLLOWING,
+  LEFT_TURN,
+  RIGHT_TURN,
+  PLACING_OBJECT
+};
+
 State state;
 RPI rpi(19200);
 QTRSensors lf;
@@ -116,8 +123,6 @@ void setup() {
   delay(10e3);
   rpi.sendMessage("ARDUINO_READY");
   rpi.sendMessage(state.log_header());
-
-  state.current_function = 3; // start by holding the robot still
 }
 
 
@@ -126,8 +131,8 @@ void setup() {
 void loop() {
   state.time_ms = millis();
 
-  state.left_limit_switch = digitalRead(limit_switch_left);
-  state.right_limit_switch = digitalRead(limit_switch_right);
+  state.left_limit_switch = digitalRead(limit_switch_left);   // 1 if not pressed 0 if pressed
+  state.right_limit_switch = digitalRead(limit_switch_right); // 1 if not pressed 0 if pressed
 
   uint16_t sensors[num_line_sensors];
   state.position = lf.readLineBlack(sensors);
@@ -159,13 +164,15 @@ void loop() {
   else {
     switch (state.current_function) {
       case 0: // Normal Line Following
+
+        // Reached 90 degree left turn
         if (state.left_low_reflectance && !state.right_low_reflectance) {
           state.current_function = 1;
           state.counted_left_junctions++;
           state.slow_cycles = 10;
         }
 
-        // Reached 90 degree right turn
+        // Reached 90 degree right turn for manuv
         else if (state.right_low_reflectance && !state.left_low_reflectance) {
           state.slow_cycles = 10;
           state.counted_right_junctions++;
@@ -182,7 +189,7 @@ void loop() {
         }
         break;
 
-      case 1: // 90 degree left turn
+      case 1: // 90 degree left turn for manuv
         {
         int left_solid_sensor_readings = 0;
         for (int i = num_line_sensors-1; i > right_turn_cutoff_index; i--) {
@@ -191,15 +198,29 @@ void loop() {
         if (left_solid_sensor_readings >= 3) state.current_function = 0;
         break;
         }
-      case 2: // 90 degree right turn
+      case 2: // 90 degree right turn for objective
         {
         int right_solid_sensor_readings = 0;
         for (int i = 0; i < left_turn_cutoff_index; i++) {
           if (sensors[i] > 800) right_solid_sensor_readings++;
         }
-        if (right_solid_sensor_readings >= 3) state.current_function = 0;
+        if (right_solid_sensor_readings >= 3) state.current_function = 22;
         }
         break;
+      case 22: // Line follow until grab, then grab
+      {
+        if (!state.left_limit_switch && !state.right_limit_switch) {
+          // DO GRAB
+          delay(3e3);
+          state.current_function = 222;
+        }
+      }
+      case 222: // Reversing from obj
+      {
+        if (state.left_low_reflectance && state.right_low_reflectance) {
+          state.current_function = 1;
+        }
+      }
       case 3: // placing the object
         break; //just stay here for now
       default:
@@ -211,10 +232,17 @@ void loop() {
 
   switch (state.current_function) {
     case 0: // Normal Line Following
-        state.error = state.position - line_center_position;
-        state.controller_output = base_controller.update(state.error);
-        state.left_speed = clamp(base_speed + state.controller_output, -clamp_max_speed, clamp_max_speed);
-        state.right_speed = clamp(base_speed - state.controller_output, -clamp_max_speed, clamp_max_speed);
+    case 22:
+      state.error = state.position - line_center_position;
+      state.controller_output = base_controller.update(state.error);
+      state.left_speed = clamp(base_speed + state.controller_output, -clamp_max_speed, clamp_max_speed);
+      state.right_speed = clamp(base_speed - state.controller_output, -clamp_max_speed, clamp_max_speed);
+      break;
+    case 222: // Reverse Line Follow
+      state.error = state.position - line_center_position;
+      state.controller_output = base_controller.update(state.error);
+      state.left_speed = clamp(-base_speed/2 - state.controller_output, -clamp_max_speed, clamp_max_speed);
+      state.right_speed = clamp(-base_speed/2 + state.controller_output, -clamp_max_speed, clamp_max_speed);
       break;
     case 1: // 90 degree left turn
 
