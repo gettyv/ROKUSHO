@@ -192,7 +192,7 @@ void loop() {
       case 1: // 90 degree left turn for manuv
         {
         int left_solid_sensor_readings = 0;
-        for (int i = num_line_sensors-1; i > right_turn_cutoff_index; i--) {
+        for (int i = 0 ; i < num_line_sensors; i++) {
           if (sensors[i] > 800) left_solid_sensor_readings++;
         }
         if (left_solid_sensor_readings >= 3) state.current_function = 0;
@@ -224,7 +224,6 @@ void loop() {
       {
         if (state.left_low_reflectance && state.right_low_reflectance) {
           state.current_function = 1;
-          state.slow_cycles = 10;
         }
       }
       case 3: // placing the object
