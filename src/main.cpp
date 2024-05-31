@@ -44,8 +44,6 @@ void turn_left() {
     if (sensors[i] > 900) solid_sensor_readings++;
   }
   if (solid_sensor_readings >= 3) break;
-
-
   }
 
   
@@ -148,59 +146,62 @@ void loop() {
     }
   }
 
-  // if (sensors[0] > 500 && sensors[1] > 500 && sensors[2] > 500) {
-  //     state.right_low_reflectance = true;
-  //   }
+  switch (state.current_function) {
+    case 0: // Normal Line Following
+      if (state.left_low_reflectance && !state.right_low_reflectance) {
+        state.current_function = 1;
+        state.counted_left_junctions++;
+      }
 
-  // if (sensors[10] > 500 && sensors[11] > 500 && sensors[12] > 500) {
-  //     state.left_low_reflectance = true;
-  // }
+      // Reached 90 degree right turn
+      else if (state.right_low_reflectance && !state.left_low_reflectance) {
+        state.current_function = 2;
+        state.counted_right_junctions++;
+      }
 
-  state.error = state.position - line_center_position;
-  state.controller_output = base_controller.update(state.error);
-
-  // Decide which operating mode to be in
-
-  // Reached 90 degree left turn
-  if ((state.left_low_reflectance && !state.right_low_reflectance) && state.current_function == 0) {
-    state.current_function = 1;
-    state.counted_left_junctions++;
-    state.slow_cycles = 50;
+      // Reached T junction
+      else if (state.left_low_reflectance && state.right_low_reflectance) {
+        state.current_function = 3;
+        state.counted_T_junctions++;
+      }
+        
+      break;
+    case 1: // 90 degree left turn
+    case 2: // 90 degree right turn
+      int solid_sensor_readings = 0;
+      for (int i = 0; i < num_line_sensors;i++) {
+        if (sensors[i] > 900) solid_sensor_readings++;
+      }
+      if (solid_sensor_readings >= 3) state.current_function = 0;
+      break;
+    default:
+      state.current_function = -1;
+      delay(1e6);
+      break;
   }
 
-  // Reached 90 degree right turn
-  else if ((state.right_low_reflectance && !state.left_low_reflectance) && state.current_function == 0) {
-    state.current_function = 2;
-    state.counted_right_junctions++;
-    state.straight_cycles = 0;
-  }
+  switch (state.current_function) {
+    case 0: // Normal Line Following
+        state.error = state.position - line_center_position;
+        state.controller_output = base_controller.update(state.error);
+        state.left_speed = clamp(base_speed + state.controller_output, -clamp_max_speed, clamp_max_speed);
+        state.right_speed = clamp(base_speed - state.controller_output, -clamp_max_speed, clamp_max_speed);
+      break;
+    case 1: // 90 degree left turn
 
-  // Reached T junction
-  else if ((state.left_low_reflectance && state.right_low_reflectance) && state.current_function == 0) {
-    state.current_function = 3;
-    state.counted_T_junctions++;
-  }
+      state.left_speed = -turn_speed;
+      state.right_speed = turn_speed;
 
-  // Normal Line Following
-  else {
-    state.current_function = 0;
-  }
-
-  float fwd_speed = base_speed;
-  
-  if (state.slow_cycles > 0) {
-    fwd_speed = 0;
-    state.slow_cycles--;
-  }
-
-  state.left_speed = clamp(fwd_speed + state.controller_output, -clamp_max_speed, clamp_max_speed);
-  state.right_speed = clamp(fwd_speed - state.controller_output, -clamp_max_speed, clamp_max_speed);
-
-  if (state.straight_cycles > 0) {
-    fwd_speed = 4;
-    state.left_speed = fwd_speed;
-    state.right_speed = fwd_speed;
-    state.straight_cycles--;
+      // Code for 90 degree left turn mode
+      break;
+    case 2: // 90 degree right turn
+      state.left_speed = turn_speed;
+      state.right_speed = -turn_speed;
+      break;
+    default:
+      state.current_function = -11;
+      delay(1e6);
+      break;
   }
 
   motors[0].set_speed(state.left_speed);
