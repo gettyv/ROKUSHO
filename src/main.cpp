@@ -141,7 +141,7 @@ void loop() {
         break;
       case 22: // Line follow until wall then grab or release
       {
-        if (!state.left_limit_switch && !state.right_limit_switch) {
+        if (!state.left_limit_switch || !state.right_limit_switch) {
           motors[0].set_speed(0);
           motors[1].set_speed(0);
           motors[2].set_speed(0);
@@ -159,6 +159,7 @@ void loop() {
             case 2:
               grabber.grabDisc(disc_positions[state.disk_num]);
               state.disk_num++;
+              state.base_speed = 10;
               break;
             case 3:
               grabber.releaseDisc();
@@ -195,14 +196,14 @@ void loop() {
     case 22:
       state.error = state.position - line_center_position;
       state.controller_output = base_controller.update(state.error);
-      state.left_speed = clamp(base_speed + state.controller_output, -clamp_max_speed, clamp_max_speed);
-      state.right_speed = clamp(base_speed - state.controller_output, -clamp_max_speed, clamp_max_speed);
+      state.left_speed = clamp(state.base_speed + state.controller_output, -clamp_max_speed, clamp_max_speed);
+      state.right_speed = clamp(state.base_speed - state.controller_output, -clamp_max_speed, clamp_max_speed);
       break;
     case 222: // Reverse Line Follow
       state.error = state.position - line_center_position;
       state.controller_output = base_controller.update(state.error);
-      state.left_speed = clamp(-base_speed + state.controller_output, -clamp_max_speed, clamp_max_speed);
-      state.right_speed = clamp(-base_speed - state.controller_output, -clamp_max_speed, clamp_max_speed);
+      state.left_speed = clamp(-state.base_speed + state.controller_output, -clamp_max_speed, clamp_max_speed);
+      state.right_speed = clamp(-state.base_speed - state.controller_output, -clamp_max_speed, clamp_max_speed);
       break;
     case 1: // 90 degree left turn
 

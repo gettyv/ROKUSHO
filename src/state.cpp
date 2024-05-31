@@ -22,6 +22,7 @@ State::State(){
     left_limit_switch = 0;
     right_limit_switch = 0;
     disk_num = 0;
+    base_speed = 4;
 }
 
 void State::reset(){
@@ -45,6 +46,7 @@ void State::reset(){
     left_limit_switch = 0;
     right_limit_switch = 0;
     disk_num = 0;
+    base_speed = 4;
 }
 
 String State::log(){
