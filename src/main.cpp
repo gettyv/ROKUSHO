@@ -195,8 +195,8 @@ void loop() {
       break;
     case 1: // 90 degree left turn
 
-      state.left_speed = clamp(5 + turn_speed, -clamp_max_speed, clamp_max_speed);
-        state.right_speed = clamp(5 - turn_speed, -clamp_max_speed, clamp_max_speed);
+      state.left_speed = clamp(turn_speed, -clamp_max_speed, clamp_max_speed);
+      state.right_speed = clamp(-turn_speed, -clamp_max_speed, clamp_max_speed);
 
       // Code for 90 degree left turn mode
       break;
