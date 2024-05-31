@@ -174,13 +174,14 @@ void loop() {
         break;
 
       case 1: // 90 degree left turn
+        {
         int left_solid_sensor_readings = 0;
         for (int i = num_line_sensors-1; i > right_turn_cutoff_index; i--) {
           if (sensors[i] > 800) left_solid_sensor_readings++;
         }
         if (left_solid_sensor_readings >= 3) state.current_function = 0;
         break;
-
+        }
       case 2: // 90 degree right turn
         {
         int right_solid_sensor_readings = 0;
