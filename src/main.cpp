@@ -114,7 +114,7 @@ void loop() {
         else if (state.left_low_reflectance && state.right_low_reflectance) {
           // state.current_function = 3;
           state.counted_T_junctions++;
-          state.slow_cycles = 10;
+          state.slow_cycles = 15;
 
           //@ all T junctions take a right
           state.current_function = 2;
