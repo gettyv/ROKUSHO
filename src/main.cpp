@@ -228,7 +228,7 @@ void loop() {
           motors[1].set_speed(7);
           motors[2].set_speed(7);
           motors[3].set_speed(7);
-          delay(1e3);
+          delay(200);
           state.current_function = 1;
           state.slow_cycles = 15;
         }
