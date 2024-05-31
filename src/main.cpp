@@ -174,21 +174,21 @@ void loop() {
         break;
 
       case 1: // 90 degree left turn
-        int solid_sensor_readings = 0;
+        int left_solid_sensor_readings = 0;
         for (int i = num_line_sensors-1; i > right_turn_cutoff_index;i--) {
-          if (sensors[i] > 800) solid_sensor_readings++;
+          if (sensors[i] > 800) left_solid_sensor_readings++;
         }
-        if (solid_sensor_readings >= 3) state.current_function = 0;
+        if (left_solid_sensor_readings >= 3) state.current_function = 0;
         break;
 
       case 2: // 90 degree right turn
-        int solid_sensor_readings = 0;
+        int right_solid_sensor_readings = 0;
         for (int i = 0; i < left_turn_cutoff_index;i++) {
-          if (sensors[i] > 800) solid_sensor_readings++;
+          if (sensors[i] > 800) right_solid_sensor_readings++;
         }
-        if (solid_sensor_readings >= 3) state.current_function = 0;
+        if (right_solid_sensor_readings >= 3) state.current_function = 0;
         break;
-        
+
       default:
         state.current_function = -1;
         // delay(1e6);
