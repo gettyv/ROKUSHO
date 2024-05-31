@@ -11,8 +11,8 @@ constexpr const int line_center_position = 1000 * (num_line_sensors - 1) / 2;
 
 constexpr float hw_max_speed = 10;
 constexpr float clamp_max_speed = 10;
-constexpr float base_speed = 6;
-constexpr float turn_speed = 10;
+constexpr float base_speed = 4;
+constexpr float turn_speed = 8;
 constexpr float Kp = 0.01;
 constexpr float Kd = 0.0025;
 
