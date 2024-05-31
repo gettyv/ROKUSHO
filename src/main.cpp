@@ -156,21 +156,21 @@ void loop() {
         if (state.left_low_reflectance && !state.right_low_reflectance) {
           state.current_function = 1;
           state.counted_left_junctions++;
-          state.slow_cycles = 5;
+          state.slow_cycles = 10;
         }
 
         // Reached 90 degree right turn
         else if (state.right_low_reflectance && !state.left_low_reflectance) {
           state.current_function = 2;
           state.counted_right_junctions++;
-          state.slow_cycles = 5;
+          state.slow_cycles = 10;
         }
 
         // Reached T junction
         else if (state.left_low_reflectance && state.right_low_reflectance) {
           // state.current_function = 3;
           state.counted_T_junctions++;
-          state.slow_cycles = 5;
+          state.slow_cycles = 10;
         }
           
         break;
@@ -198,8 +198,8 @@ void loop() {
       break;
     case 1: // 90 degree left turn
 
-      state.left_speed = turn_speed;
-      state.right_speed = -turn_speed;
+      state.left_speed = clamp(5 + turn_speed, -clamp_max_speed, clamp_max_speed);
+        state.right_speed = clamp(5 - turn_speed, -clamp_max_speed, clamp_max_speed);
 
       // Code for 90 degree left turn mode
       break;
