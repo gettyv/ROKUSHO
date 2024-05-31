@@ -128,8 +128,8 @@ void loop() {
   state.left_low_reflectance = true;
   state.right_low_reflectance = true;
 
-  int right_turn_cutoff_index = 4;
-  int left_turn_cutoff_index = 8;
+  int right_turn_cutoff_index = 3;
+  int left_turn_cutoff_index = 9;
 
   for (int i = num_line_sensors-1; i > right_turn_cutoff_index; i--) {
     if (sensors[i] < 700) {
@@ -159,7 +159,8 @@ void loop() {
         // Reached 90 degree right turn
         else if (state.right_low_reflectance && !state.left_low_reflectance) {
           state.slow_cycles = 10;
-          if (state.counted_right_junctions++ == dropoff_location){
+          state.counted_right_junctions++;
+          if (state.counted_right_junctions == dropoff_location){
             state.current_function = 2;
           }
         }
