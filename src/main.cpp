@@ -224,8 +224,13 @@ void loop() {
       case 222: // Reversing from obj
       {
         if (state.left_low_reflectance && state.right_low_reflectance) {
+          motors[0].set_speed(7);
+          motors[1].set_speed(7);
+          motors[2].set_speed(7);
+          motors[3].set_speed(7);
+          delay(1e3);
           state.current_function = 1;
-          state.slow_cycles = 10;
+          state.slow_cycles = 15;
         }
         break;
       }
