@@ -3,6 +3,9 @@
 constexpr int num_motors_ps = 2;
 constexpr int m_pin[][2] = {{4,5}, {6,7}, {12,13}, {3,2}};
 
+constexpr int limit_switch_left = 15;
+constexpr int limit_switch_right = 14;
+
 constexpr int calibration_LED_pin = 13;
 
 constexpr const int num_line_sensors = 13;

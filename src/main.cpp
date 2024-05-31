@@ -101,6 +101,9 @@ void setup() {
   lf.setTypeAnalog();
   lf.setSensorPins(line_follower_pins, num_line_sensors);
 
+  pinMode(limit_switch_left, INPUT_PULLUP);
+  pinMode(limit_switch_right, INPUT_PULLUP);
+
 
   digitalWrite(calibration_LED_pin, HIGH);
   for (uint8_t i = 0; i < calibration_iterations; i++)
@@ -113,6 +116,8 @@ void setup() {
   delay(10e3);
   rpi.sendMessage("ARDUINO_READY");
   rpi.sendMessage(state.log_header());
+
+  state.current_function = 3; // start by holding the robot still
 }
 
 
@@ -120,6 +125,10 @@ void setup() {
 
 void loop() {
   state.time_ms = millis();
+
+  state.left_limit_switch = digitalRead(limit_switch_left);
+  state.right_limit_switch = digitalRead(limit_switch_right);
+
   uint16_t sensors[num_line_sensors];
   state.position = lf.readLineBlack(sensors);
 
@@ -191,6 +200,8 @@ void loop() {
         if (right_solid_sensor_readings >= 3) state.current_function = 0;
         }
         break;
+      case 3: // placing the object
+        break; //just stay here for now
       default:
         state.current_function = -1;
         // delay(1e6);
@@ -215,6 +226,10 @@ void loop() {
     case 2: // 90 degree right turn
       state.left_speed = -turn_speed;
       state.right_speed = turn_speed;
+      break;
+    case 3: //placing the object
+      state.left_speed = 0;
+      state.right_speed = 0;
       break;
     default:
       state.current_function = -11;
