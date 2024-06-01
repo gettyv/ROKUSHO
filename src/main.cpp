@@ -148,7 +148,7 @@ for (int i = 0; i < left_turn_cutoff_index; i++) {
       case 2: // 90 degree right turn for objective
         {
         int right_solid_sensor_readings = 0;
-        for (int i = 0; i < left_turn_cutoff_index; i++) {
+        for (int i = 0; i < num_line_sensors; i++) {
           if (sensors[i] > 800) right_solid_sensor_readings++;
         }
         if (right_solid_sensor_readings >= 3) state.current_function = 22;
