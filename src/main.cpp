@@ -202,7 +202,7 @@ if (reflectance_counter >= readings) reflectance_counter = 0;
             case 2:
               grabber.grabDisc(disc_positions[state.disk_num]);
               state.disk_num++;
-              state.straight_cycles = 8e3;
+              state.straight_cycles = 8e3 / 50;
               break;
             case 3:
               grabber.releaseDisc();
