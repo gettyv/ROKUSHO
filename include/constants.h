@@ -37,15 +37,15 @@ constexpr float Kp = 0.01;
 constexpr float Kd = 0.0025;
 
 // Claw constants
-constexpr int SWEEP_DELAY = 40;
+constexpr int SWEEP_DELAY = 6;
 constexpr int ACTION_DELAY = 500;
 
 constexpr int bar_min = 60;
 constexpr int bar_max = 210;
 
-constexpr int platform = 75;
+constexpr int platform = 70;
 
-constexpr int disc_positions[] = {200, 190, 185};
+constexpr int disc_positions[] = {205, 195, 185};
 
 constexpr int grab_min = 80;
 constexpr int grab_max = 200;
