@@ -184,7 +184,7 @@ if (reflectance_counter >= readings) reflectance_counter = 0;
       case 221:
       case 220:
       {
-        if (!state.left_limit_switch && !state.right_limit_switch) {
+        if (!state.left_limit_switch || !state.right_limit_switch) {
           motors[0].set_speed(0);
           motors[1].set_speed(0);
           motors[2].set_speed(0);
@@ -254,6 +254,10 @@ if (reflectance_counter >= readings) reflectance_counter = 0;
       else state.base_speed = base_speed;
       state.left_speed = clamp(state.base_speed + state.controller_output, -clamp_max_speed, clamp_max_speed);
       state.right_speed = clamp(state.base_speed - state.controller_output, -clamp_max_speed, clamp_max_speed);
+      if (!state.left_limit_switch || !state.right_limit_switch) {
+        state.left_speed = 0;
+        state.right_speed = 0;
+      }
       break;
     case 220:
       state.left_speed = 10;
@@ -266,8 +270,8 @@ if (reflectance_counter >= readings) reflectance_counter = 0;
     case 222: // Reverse Line Follow
       state.error = state.position - line_center_position;
       state.controller_output = base_controller.update(state.error);
-      state.left_speed = clamp(-state.base_speed + state.controller_output, -clamp_max_speed, clamp_max_speed);
-      state.right_speed = clamp(-state.base_speed - state.controller_output, -clamp_max_speed, clamp_max_speed);
+      state.left_speed = -3;
+      state.right_speed = -3;
       break;
     case 1: // 90 degree left turn
 

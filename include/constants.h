@@ -45,7 +45,7 @@ constexpr int bar_max = 210;
 
 constexpr int platform = 70;
 
-constexpr int disc_positions[] = {205, 195, 185};
+constexpr int disc_positions[] = {200, 195, 190};
 
 constexpr int grab_min = 80;
 constexpr int grab_max = 200;
