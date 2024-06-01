@@ -147,8 +147,13 @@ if (reflectance_counter >= readings) reflectance_counter = 0;
             break;
           case T: // T junction
             // state.current_function = 3;
+            motors[0].set_speed(0);
+            motors[1].set_speed(0);
+            motors[2].set_speed(0);
+            motors[3].set_speed(0);
+            delay(2e3);
             state.counted_T_junctions++;
-            state.slow_cycles = 10;
+            state.slow_cycles = 15;
 
             //@ all T junctions take a right
             state.current_function = 2;
