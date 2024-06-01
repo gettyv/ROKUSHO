@@ -22,7 +22,11 @@ Motor(m_pin[2][0], m_pin[2][1]),
 Motor(m_pin[3][0], m_pin[3][1])};
 
 int dropoff_location = 6;
-int dropoff_target = 2;
+bool pickup_location[3][2] = {{1, 0}, 
+                              {1, 0}, 
+                              {1, 0}};
+
+
 
 void go_forward_for_time(int duration) {
   unsigned long start_time = millis();
@@ -129,6 +133,19 @@ void loop() {
           // state.current_function = 3;
           state.counted_T_junctions++;
           state.slow_cycles = 10;
+          if (pickup_location[state.counted_T_junctions][0] && pickup_location[state.counted_T_junctions][1]) {
+            // Pick up both sides
+            state.current_function = 44;
+          }
+          else if (pickup_location[state.counted_T_junctions][0]) {
+            // Pick up left side
+            state.current_function = 33;
+          }
+          else if (pickup_location[state.counted_T_junctions][1]) {
+            // Pick up right side
+            state.current_function = 22;
+          }
+
         }
         break;
 
