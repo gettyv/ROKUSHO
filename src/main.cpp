@@ -202,7 +202,7 @@ if (reflectance_counter >= readings) reflectance_counter = 0;
             case 2:
               grabber.grabDisc(disc_positions[state.disk_num]);
               state.disk_num++;
-              state.base_speed = 10;
+              state.straight_cycles = 8e3;
               break;
             case 3:
               grabber.releaseDisc();
@@ -247,6 +247,11 @@ if (reflectance_counter >= readings) reflectance_counter = 0;
     case 22:
       state.error = state.position - line_center_position;
       state.controller_output = base_controller.update(state.error);
+      if (state.straight_cycles > 0) {
+        state.straight_cycles--;
+        state.base_speed = 10;
+        }
+      else state.base_speed = base_speed;
       state.left_speed = clamp(state.base_speed + state.controller_output, -clamp_max_speed, clamp_max_speed);
       state.right_speed = clamp(state.base_speed - state.controller_output, -clamp_max_speed, clamp_max_speed);
       break;
