@@ -10,6 +10,14 @@
 #include <controller.h>
 #include <claw.h>
 
+
+enum JunctionType {
+  NONE,
+  LEFT,
+  RIGHT,
+  T,
+};
+
 State state;
 RPI rpi(19200);
 
@@ -23,6 +31,25 @@ Motor(m_pin[3][0], m_pin[3][1])};
 
 int dropoff_location = 6;
 int dropoff_target = 2;
+
+int return_junction(bool left_readings[readings], bool right_readings[readings]) {
+  bool right_is_black = false;
+  bool left_is_black = false;
+
+  int right_tally = 0;
+  int left_tally = 0;
+
+  for (int i = 0; i < readings; i++){
+    if (right_readings[i]) right_tally++;
+    if (left_readings[i]) left_tally++;
+  }
+
+  if (right_tally >= 1 && left_tally >=1) return T;
+  else if (right_tally >= readings) return RIGHT;
+  else if (left_tally >= readings) return LEFT;
+  else return NONE;
+}
+
 
 void setup() {
   rpi.begin();
@@ -57,8 +84,11 @@ bool switchPressed_L = false;
 bool switchPressed_R = false;
 bool switchPressed = false;
 
-int left_reflectance_count = 0;
-int right_reflectance_count = 0;
+
+int reflectance_counter = 0;
+
+bool left_reflectance_readings[3] = {false, false, false};
+bool right_reflectance_readings[3] = {false, false, false};
 
 void loop() {
   state.time_ms = millis();
@@ -79,28 +109,21 @@ void loop() {
 
 for (int i = num_line_sensors-1; i > right_turn_cutoff_index; i--) {
   if (sensors[i] < 700) {
-    left_reflectance_count++;
-    if (left_reflectance_count > 1) {
       state.left_low_reflectance = false;
-      left_reflectance_count = 0;
     }
   }
-  else {
-    left_reflectance_count = 0;
-  }
-}
+
 for (int i = 0; i < left_turn_cutoff_index; i++) {
   if (sensors[i] < 700) {
-    right_reflectance_count++;
-    if (right_reflectance_count > 1) {
-      state.right_low_reflectance = false;
-      right_reflectance_count = 0;
-    }
-  }
-  else {
-    right_reflectance_count = 0;
+    state.right_low_reflectance = false;
   }
 }
+
+left_reflectance_readings[reflectance_counter] = state.left_low_reflectance;
+right_reflectance_readings[reflectance_counter] = state.right_low_reflectance;
+reflectance_counter++;
+if (reflectance_counter >= readings) reflectance_counter = 0;
+
 
   if (state.slow_cycles > 0) {
     state.slow_cycles--;
@@ -109,33 +132,31 @@ for (int i = 0; i < left_turn_cutoff_index; i++) {
   else {
     switch (state.current_function) {
       case 0: // Normal Line Following
-        // Reached 90 degree left turn
-        if (state.left_low_reflectance && !state.right_low_reflectance) {
-          state.current_function = 1;
-          state.counted_left_junctions++;
-          state.slow_cycles = 10;
-        }
+        switch (return_junction(left_reflectance_readings, right_reflectance_readings)) {
+          case LEFT: // 90 degree left turn
+            state.current_function = 1;
+            state.counted_left_junctions++;
+            state.slow_cycles = 10;
+            break;
+          case RIGHT: // 90 degree right turn for manuvering
+            state.slow_cycles = 10;
+            state.counted_right_junctions++;
+            if (state.counted_right_junctions == dropoff_location){
+              state.current_function = 2;
+            }
+            break;
+          case T: // T junction
+            // state.current_function = 3;
+            state.counted_T_junctions++;
+            state.slow_cycles = 10;
 
-        // Reached 90 degree right turn for manuv
-        else if (state.right_low_reflectance && !state.left_low_reflectance) {
-          state.slow_cycles = 10;
-          state.counted_right_junctions++;
-          if (state.counted_right_junctions == dropoff_location){
+            //@ all T junctions take a right
             state.current_function = 2;
+            break;
+          case NONE:
+            break;
           }
-        }
-
-        // Reached T junction
-        else if (state.left_low_reflectance && state.right_low_reflectance) {
-          // state.current_function = 3;
-          state.counted_T_junctions++;
-          state.slow_cycles = 10;
-
-          //@ all T junctions take a right
-          state.current_function = 2;
-        }
         break;
-
       case 1: // 90 degree left turn for manuv
         {
         int left_solid_sensor_readings = 0;

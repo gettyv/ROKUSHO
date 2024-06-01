@@ -18,6 +18,10 @@ constexpr int calibration_LED_pin = 13;
 #define LIMIT_SWITCH_PIN_L 2
 #define LIMIT_SWITCH_PIN_R 3
 
+
+// junction filter
+constexpr const int readings = 2;
+
 //IR sensor array
 constexpr const int num_line_sensors = 13;
 constexpr unsigned char line_follower_pins[num_line_sensors] = {A0, A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12};
