@@ -6,7 +6,7 @@ import numpy as np
 data_list = []
 
 # Set up the serial connection (adjust the port as necessary)
-ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+ser = serial.Serial('/dev/ttyACM0', 19200, timeout=1)
 time.sleep(2)  # Wait for the serial connection to initialize
 
 # Send the "START" command to the Arduino
