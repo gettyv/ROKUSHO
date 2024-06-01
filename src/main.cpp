@@ -77,6 +77,31 @@ void loop() {
   int right_turn_cutoff_index = 4;
   int left_turn_cutoff_index = 8;
 
+for (int i = num_line_sensors-1; i > right_turn_cutoff_index; i--) {
+  if (sensors[i] < 700) {
+    left_reflectance_count++;
+    if (left_reflectance_count > 1) {
+      state.left_low_reflectance = false;
+      left_reflectance_count = 0;
+    }
+  }
+  else {
+    left_reflectance_count = 0;
+  }
+}
+for (int i = 0; i < left_turn_cutoff_index; i++) {
+  if (sensors[i] < 700) {
+    right_reflectance_count++;
+    if (right_reflectance_count > 1) {
+      state.right_low_reflectance = false;
+      right_reflectance_count = 0;
+    }
+  }
+  else {
+    right_reflectance_count = 0;
+  }
+}
+
   if (state.slow_cycles > 0) {
     state.slow_cycles--;
   }
@@ -84,25 +109,6 @@ void loop() {
   else {
     switch (state.current_function) {
       case 0: // Normal Line Following
-        for (int i = num_line_sensors-1; i > right_turn_cutoff_index; i--) {
-          if (sensors[i] < 700) {
-            left_reflectance_count++;
-            if (left_reflectance_count > 1) {
-              state.left_low_reflectance = false;
-              left_reflectance_count = 0;
-            }
-          }
-        }
-
-        for (int i = 0; i < left_turn_cutoff_index; i++) {
-          if (sensors[i] < 700) {
-            right_reflectance_count++;
-            if (right_reflectance_count > 1) {
-              state.right_low_reflectance = false;
-              right_reflectance_count = 0;
-            }
-          }
-        }
         // Reached 90 degree left turn
         if (state.left_low_reflectance && !state.right_low_reflectance) {
           state.current_function = 1;
