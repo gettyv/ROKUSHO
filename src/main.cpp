@@ -151,7 +151,7 @@ if (reflectance_counter >= readings) reflectance_counter = 0;
             motors[1].set_speed(4);
             motors[2].set_speed(4);
             motors[3].set_speed(4);
-            delay(0.2e3);
+            delay(0.09e3);
             state.counted_T_junctions++;
             state.slow_cycles = 15;
 
