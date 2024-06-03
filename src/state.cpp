@@ -18,7 +18,7 @@ State::State(){
     counted_right_junctions = 0;
     counted_T_junctions = 0;
     slow_cycles = 0;
-    straight_cycles = 0;
+    straight_cycles = 8e3/50;
     left_limit_switch = 0;
     right_limit_switch = 0;
     disk_num = 0;
