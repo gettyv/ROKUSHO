@@ -2,6 +2,7 @@
 #include <claw.h>
 #include <servo.h>
 #include <constants.h>
+#include <fns.h>
 
 Claw::Claw(int FourBarPWMPin, int GrabbingPWMPin, int FourBarPotentiometerPin, int GrabbingPotentiometerPin): 
     fourBarServo(FourBarPWMPin, FourBarPotentiometerPin),
@@ -47,18 +48,6 @@ void Claw::setFourBarAngle(int angle){
 
 void Claw::setGrabbingAngle(int angle){
     grabbingServo.set_angle(angle);
-}
-
-// Simple clamping function
-template <typename T>
-T clamp(T value, T minVal, T maxVal) {
-  if (value < minVal) {
-    return minVal;
-  } else if (value > maxVal) {
-    return maxVal;
-  } else {
-    return value;
-  }
 }
 
 void Claw::sendManual(){
@@ -123,7 +112,6 @@ void Claw::grabDisc(int disc){
 }
 
 void Claw::releaseDisc(){
-
   //open grabber
   Serial.println("Opening Grabbers");
   for (int angle = grabbingAngle; angle <= grab_open; angle++) {
