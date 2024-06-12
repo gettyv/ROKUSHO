@@ -249,6 +249,7 @@ if (reflectance_counter >= readings) reflectance_counter = 0;
         if (right_solid_sensor_readings >= 3) {
           // Handle case if grabbing both discs
           if (double_grab) {
+            state.slow_cycles = 15;
             state.current_function = 22;
             double_grab--;
           }
