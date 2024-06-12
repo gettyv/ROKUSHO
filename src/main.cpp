@@ -158,8 +158,19 @@ if (reflectance_counter >= readings) reflectance_counter = 0;
             state.counted_T_junctions++;
             state.slow_cycles = 15;
 
-            //@ all T junctions take a right
-            state.current_function = 2;
+            //Decide which direction to go based on input
+            if (pickup_location[state.counted_T_junctions][0] && pickup_location[state.counted_T_junctions][1]) {
+              // Pick up both sides
+              state.current_function = 44;
+            }
+            else if (pickup_location[state.counted_T_junctions][0]) {
+              // Pick up left side
+              state.current_function = 11;
+            }
+            else if (pickup_location[state.counted_T_junctions][1]) {
+              // Pick up right side
+              state.current_function = 22;
+            }
             break;
           case NONE:
             break;
@@ -174,16 +185,79 @@ if (reflectance_counter >= readings) reflectance_counter = 0;
         if (left_solid_sensor_readings >= 3) state.current_function = 0;
         break;
         }
-      case 2: // 90 degree right turn for objective
+      case 11: // 90 degree left turn for objective
+        {
+        int left_solid_sensor_readings = 0;
+        for (int i = 0; i < num_line_sensors; i++) {
+          if (sensors[i] > 800) left_solid_sensor_readings++;
+        }
+        if (left_solid_sensor_readings >= 3) state.current_function = 10;
+        }
+        break;
+      case 10:
+        if (!state.left_limit_switch || !state.right_limit_switch) {
+          motors[0].set_speed(0);
+          motors[1].set_speed(0);
+          motors[2].set_speed(0);
+          motors[3].set_speed(0);
+          
+          switch (state.disk_num) {
+            case 0:
+              grabber.grabDisc(disc_positions[state.disk_num]);
+              state.disk_num++;
+              break;
+            case 1:
+              grabber.grabDisc(disc_positions[state.disk_num]);
+              state.disk_num++;
+              break;
+            case 2:
+              grabber.grabDisc(disc_positions[state.disk_num]);
+              state.disk_num++;
+              state.straight_cycles = 8e3 / 50;
+              break;
+            case 3:
+              grabber.releaseDisc();
+          }
+
+          state.current_function = 13;
+        }
+        break;
+
+      case 13: // Reversing from obj
+      {
+        if (state.left_low_reflectance && state.right_low_reflectance) {
+          motors[0].set_speed(7);
+          motors[1].set_speed(7);
+          motors[2].set_speed(7);
+          motors[3].set_speed(7);
+          delay(200);
+          state.slow_cycles = 15;
+          state.current_function = 2;
+        }
+        break;
+      }
+
+      case 2: // 90 degree right turn for manuv
         {
         int right_solid_sensor_readings = 0;
         for (int i = 0; i < num_line_sensors; i++) {
           if (sensors[i] > 800) right_solid_sensor_readings++;
         }
-        if (right_solid_sensor_readings >= 3) state.current_function = 22;
+        if (right_solid_sensor_readings >= 3) state.current_function = 0;
         }
         break;
-      case 22: // Line follow until wall then grab or release
+
+      case 22: // 90 degree right turn for objective
+        {
+        int right_solid_sensor_readings = 0;
+        for (int i = 0; i < num_line_sensors; i++) {
+          if (sensors[i] > 800) right_solid_sensor_readings++;
+        }
+        if (right_solid_sensor_readings >= 3) state.current_function = 20;
+        }
+        break;
+
+      case 20: // Line follow until wall then grab or release
       {
         if (!state.left_limit_switch || !state.right_limit_switch) {
           motors[0].set_speed(0);
@@ -209,25 +283,26 @@ if (reflectance_counter >= readings) reflectance_counter = 0;
               grabber.releaseDisc();
           }
 
-          state.current_function = 222;
+          state.current_function = 23;
         }
         break;
       }
-      case 222: // Reversing from obj
+      case 23: // Reversing from obj
       {
         if (state.left_low_reflectance && state.right_low_reflectance) {
+          // Fudge factor turn to make turning easier
           motors[0].set_speed(7);
           motors[1].set_speed(7);
           motors[2].set_speed(7);
           motors[3].set_speed(7);
           delay(200);
-          state.current_function = 1;
           state.slow_cycles = 15;
+          state.current_function = 1;
         }
         break;
       }
-      case 3: // placing the object
-        break; //just stay here for now
+      case 3: // blind backwards
+        break;
       default:
         state.current_function = -1;
         // delay(1e6);
@@ -237,9 +312,12 @@ if (reflectance_counter >= readings) reflectance_counter = 0;
 
   switch (state.current_function) {
     case 0: // Normal Line Following
-    case 22:
+    case 20:
+    case 10:
       state.error = state.position - line_center_position;
       state.controller_output = base_controller.update(state.error);
+
+      // Go faster for straight cycles
       if (state.straight_cycles > 0) {
         state.straight_cycles--;
         state.base_speed = 10;
@@ -247,25 +325,30 @@ if (reflectance_counter >= readings) reflectance_counter = 0;
       else state.base_speed = base_speed;
       state.left_speed = clamp(state.base_speed + state.controller_output, -clamp_max_speed, clamp_max_speed);
       state.right_speed = clamp(state.base_speed - state.controller_output, -clamp_max_speed, clamp_max_speed);
+      
+      // Stop for dynamic obstacle
       if (!state.left_limit_switch || !state.right_limit_switch) {
         state.left_speed = 0;
         state.right_speed = 0;
       }
       break;
-    case 222: // Reverse Line Follow
+    case 23: // Reverse Line Follow
+    case 13:
       state.error = state.position - line_center_position;
       state.controller_output = base_controller.update(state.error);
+
+      // Update controller but still just go straight back
       state.left_speed = -3;
       state.right_speed = -3;
       break;
     case 1: // 90 degree left turn
+    case 11:
 
       state.left_speed = clamp(turn_speed, -clamp_max_speed, clamp_max_speed);
       state.right_speed = clamp(-turn_speed, -clamp_max_speed, clamp_max_speed);
-
-      // Code for 90 degree left turn mode
       break;
     case 2: // 90 degree right turn
+    case 22:
       state.left_speed = -turn_speed;
       state.right_speed = turn_speed;
       break;
