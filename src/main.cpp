@@ -145,7 +145,7 @@ if (reflectance_counter >= readings) reflectance_counter = 0;
             state.slow_cycles = 10;
             state.counted_right_junctions++;
             if (state.counted_right_junctions == dropoff_location){
-              state.current_function = 2;
+              state.current_function = 22;
             }
             break;
           case T: // T junction
