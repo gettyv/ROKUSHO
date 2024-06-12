@@ -30,7 +30,10 @@ Motor(m_pin[2][0], m_pin[2][1]),
 Motor(m_pin[3][0], m_pin[3][1])};
 
 int dropoff_location = 6;
-int dropoff_target = 2;
+bool pickup_location[3][2] = {{1, 0}, 
+                              {1, 0}, 
+                              {1, 0}};
+
 
 int return_junction(bool left_readings[readings], bool right_readings[readings]) {
   bool right_is_black = false;
@@ -181,8 +184,6 @@ if (reflectance_counter >= readings) reflectance_counter = 0;
         }
         break;
       case 22: // Line follow until wall then grab or release
-      case 221:
-      case 220:
       {
         if (!state.left_limit_switch || !state.right_limit_switch) {
           motors[0].set_speed(0);
@@ -210,14 +211,6 @@ if (reflectance_counter >= readings) reflectance_counter = 0;
 
           state.current_function = 222;
         }
-        else if (!state.left_limit_switch){
-          state.current_function = 220;
-        }
-        else if (!state.right_limit_switch)
-        {
-          state.current_function = 221;
-        }
-          
         break;
       }
       case 222: // Reversing from obj
@@ -258,14 +251,6 @@ if (reflectance_counter >= readings) reflectance_counter = 0;
         state.left_speed = 0;
         state.right_speed = 0;
       }
-      break;
-    case 220:
-      state.left_speed = 10;
-      state.right_speed = 0;
-      break;
-    case 221:
-      state.left_speed = 0;
-      state.right_speed = 10;
       break;
     case 222: // Reverse Line Follow
       state.error = state.position - line_center_position;
