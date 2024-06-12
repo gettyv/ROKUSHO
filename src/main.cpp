@@ -33,6 +33,7 @@ int dropoff_location = 6;
 bool pickup_location[3][2] = {{1, 0}, 
                               {1, 0}, 
                               {1, 0}};
+int double_grab = 0;
 
 
 int return_junction(bool left_readings[readings], bool right_readings[readings]) {
@@ -160,8 +161,10 @@ if (reflectance_counter >= readings) reflectance_counter = 0;
 
             //Decide which direction to go based on input
             if (pickup_location[state.counted_T_junctions-1][0] && pickup_location[state.counted_T_junctions-1][1]) {
-              // Pick up both sides
-              state.current_function = 44;
+              // Mark that grabbing both
+              double_grab = 1;
+              // Pick up left side first
+              state.current_function = 11;
             }
             else if (pickup_location[state.counted_T_junctions-1][0]) {
               // Pick up left side
@@ -243,7 +246,16 @@ if (reflectance_counter >= readings) reflectance_counter = 0;
         for (int i = 0; i < num_line_sensors; i++) {
           if (sensors[i] > 800) right_solid_sensor_readings++;
         }
-        if (right_solid_sensor_readings >= 3) state.current_function = 0;
+        if (right_solid_sensor_readings >= 3) {
+          // Handle case if grabbing both discs
+          if (double_grab) {
+            state.current_function = 22;
+            double_grab--;
+          }
+          else {
+            state.current_function = 0;
+          }
+          }
         }
         break;
 
