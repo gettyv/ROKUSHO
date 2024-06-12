@@ -159,15 +159,15 @@ if (reflectance_counter >= readings) reflectance_counter = 0;
             state.slow_cycles = 15;
 
             //Decide which direction to go based on input
-            if (pickup_location[state.counted_T_junctions][0] && pickup_location[state.counted_T_junctions][1]) {
+            if (pickup_location[state.counted_T_junctions-1][0] && pickup_location[state.counted_T_junctions-1][1]) {
               // Pick up both sides
               state.current_function = 44;
             }
-            else if (pickup_location[state.counted_T_junctions][0]) {
+            else if (pickup_location[state.counted_T_junctions-1][0]) {
               // Pick up left side
               state.current_function = 11;
             }
-            else if (pickup_location[state.counted_T_junctions][1]) {
+            else if (pickup_location[state.counted_T_junctions-1][1]) {
               // Pick up right side
               state.current_function = 22;
             }
